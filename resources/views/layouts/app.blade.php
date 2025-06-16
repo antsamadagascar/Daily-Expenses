@@ -34,8 +34,8 @@
                                class="text-gray-900 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium">
                                 Mes dépenses
                             </a>
-                            <a href="#" 
-                               class="text-gray-900 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium">
+                            <a href="{{ route('expenses.add') }}" 
+                               class="text-gray-900 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium {{ request()->routeIs('expenses.add') ? 'bg-blue-100 text-blue-600' : '' }}">
                                 Ajouter dépense
                             </a>
                             <a href="#" 
