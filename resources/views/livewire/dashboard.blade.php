@@ -5,8 +5,8 @@
         </h3>
         
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <!-- Carte des dépenses du mois -->
-            <div class="bg-blue-50 overflow-hidden shadow rounded-lg">
+        <!-- Carte des dépenses du mois -->
+        <div class="bg-blue-50 overflow-hidden shadow rounded-lg">
                 <div class="p-5">
                     <div class="flex items-center">
                         <div class="flex-shrink-0">
@@ -22,14 +22,13 @@
                                     Dépenses ce mois
                                 </dt>
                                 <dd class="text-lg font-medium text-gray-900">
-                                    0,00 €
+                                    {{ number_format($currentMonthExpenses, 2) }}Ar
                                 </dd>
                             </dl>
-                        </div>
+                         </div>
                     </div>
                 </div>
-            </div>
-
+             </div>
             <!-- Carte du nombre de dépenses -->
             <div class="bg-green-50 overflow-hidden shadow rounded-lg">
                 <div class="p-5">
@@ -47,7 +46,7 @@
                                     Nombre de dépenses
                                 </dt>
                                 <dd class="text-lg font-medium text-gray-900">
-                                    0
+                                    {{ $currentMonthCount }}
                                 </dd>
                             </dl>
                         </div>
@@ -72,7 +71,7 @@
                                     Moyenne journalière
                                 </dt>
                                 <dd class="text-lg font-medium text-gray-900">
-                                    0,00 €
+                                    {{ number_format($dailyAverage, 2) }}Ar
                                 </dd>
                             </dl>
                         </div>
