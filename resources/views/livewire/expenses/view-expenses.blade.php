@@ -68,9 +68,9 @@
                 <div>
                     <label for="year" class="block text-base font-medium text-gray-800 mb-2">Année</label>
                     <select wire:model.live="selectedYear" id="year" class="form-input w-full px-4 py-2 text-base border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
-                        @for($year = now()->year; $year >= now()->year - 5; $year--)
+                        @foreach($availableYears as $year)
                             <option value="{{ $year }}">{{ $year }}</option>
-                        @endfor
+                        @endforeach
                     </select>
                 </div>
 
