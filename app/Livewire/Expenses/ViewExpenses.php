@@ -90,7 +90,7 @@ class ViewExpenses extends Component
         }
 
         return $query->orderBy($this->sortBy, $this->sortDirection)
-                    ->paginate(15);
+                    ->paginate(10);
     }
 
     public function getMonthlyTotalProperty()
