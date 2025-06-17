@@ -16,6 +16,7 @@ Route::get('/login', Login::class)
 // Routes protégées
 Route::middleware('auth')->group(function () {
     Route::get('/dashboard', Dashboard::class)->name('dashboard');
+    Route::get('/expenses/add', \App\Livewire\Expenses\AddExpense::class)->name('expenses.add');
 });
 
 // Redirection automatique vers dashboard si connecté
