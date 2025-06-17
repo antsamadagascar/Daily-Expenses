@@ -50,25 +50,25 @@
 
     <!-- Filtres -->
     <div class="bg-white overflow-hidden shadow rounded-lg">
-        <div class="px-4 py-5 sm:p-6">
-            <h3 class="text-lg font-medium text-gray-900 mb-4">Filtres et Recherche</h3>
+        <div class="px-6 py-6">
+            <h3 class="text-xl font-semibold text-gray-900 mb-6">Filtres et Recherche</h3>
             
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-                <!-- Sélection du mois -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+                <!-- Mois -->
                 <div>
-                    <label for="month" class="block text-sm font-medium text-gray-700">Mois</label>
-                    <select wire:model.live="selectedMonth" id="month" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                    <label for="month" class="block text-base font-medium text-gray-800 mb-2">Mois</label>
+                    <select wire:model.live="selectedMonth" id="month" class="form-input w-full px-4 py-2 text-base border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
                         @for($i = 1; $i <= 12; $i++)
                             <option value="{{ $i }}">{{ Carbon\Carbon::create()->month($i)->locale('fr')->monthName }}</option>
                         @endfor
                     </select>
                 </div>
 
-                <!-- Sélection de l'année -->
+                <!-- Année -->
                 <div>
-                    <label for="year" class="block text-sm font-medium text-gray-700">Année</label>
-                    <select wire:model.live="selectedYear" id="year" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
-                        @for($year = Carbon\Carbon::now()->year; $year >= Carbon\Carbon::now()->year - 5; $year--)
+                    <label for="year" class="block text-base font-medium text-gray-800 mb-2">Année</label>
+                    <select wire:model.live="selectedYear" id="year" class="form-input w-full px-4 py-2 text-base border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
+                        @for($year = now()->year; $year >= now()->year - 5; $year--)
                             <option value="{{ $year }}">{{ $year }}</option>
                         @endfor
                     </select>
@@ -76,8 +76,8 @@
 
                 <!-- Catégorie -->
                 <div>
-                    <label for="category" class="block text-sm font-medium text-gray-700">Catégorie</label>
-                    <select wire:model.live="selectedCategory" id="category" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                    <label for="category" class="block text-base font-medium text-gray-800 mb-2">Catégorie</label>
+                    <select wire:model.live="selectedCategory" id="category" class="form-input w-full px-4 py-2 text-base border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
                         <option value="">Toutes les catégories</option>
                         @foreach($categories as $category)
                             <option value="{{ $category->id }}">{{ $category->name }}</option>
@@ -87,12 +87,10 @@
 
                 <!-- Recherche -->
                 <div>
-                    <label for="search" class="block text-sm font-medium text-gray-700">Recherche</label>
-                    <input wire:model.live.debounce.500ms="searchTerm" 
-                           type="text" 
-                           id="search"
-                           placeholder="Description, notes..."
-                           class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                    <label for="search" class="block text-base font-medium text-gray-800 mb-2">Recherche</label>
+                    <input wire:model.live.debounce.500ms="searchTerm" type="text" id="search"
+                        placeholder="Description, notes..."
+                        class="form-input w-full px-4 py-2 text-base border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
                 </div>
             </div>
         </div>
