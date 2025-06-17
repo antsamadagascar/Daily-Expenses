@@ -21,12 +21,15 @@ class ViewExpenses extends Component
     public $sortBy = 'expense_date';
     public $sortDirection = 'desc';
     public $categories = [];
+    public $availableYears = [];
+
     
     public function mount()
     {
         $this->selectedMonth = Carbon::now()->month;
         $this->selectedYear = Carbon::now()->year;
         $this->loadCategories();
+        $this->loadAvailableYears();
     }
 
     public function loadCategories()
@@ -191,4 +194,15 @@ class ViewExpenses extends Component
             'monthName' => Carbon::createFromDate($this->selectedYear, $this->selectedMonth, 1)->locale('fr')->monthName
         ])->layout('layouts.app');
     }
+
+    public function loadAvailableYears()
+    {
+        $this->availableYears = Expense::where('user_id', Auth::id())
+            ->selectRaw('YEAR(expense_date) as year')
+            ->distinct()
+            ->orderByDesc('year')
+            ->pluck('year')
+            ->toArray();
+    }
+
 }
