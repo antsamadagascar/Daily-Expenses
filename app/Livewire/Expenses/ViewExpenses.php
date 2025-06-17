@@ -8,6 +8,7 @@ use App\Models\Expense;
 use App\Models\Category;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class ViewExpenses extends Component
 {
@@ -116,6 +117,47 @@ class ViewExpenses extends Component
             ->groupBy('category_id')
             ->orderByDesc('total')
             ->get();
+    }
+
+    public function exportPdf()
+    {
+        $expenses = Expense::with('category')
+            ->where('user_id', Auth::id())
+            ->whereMonth('expense_date', $this->selectedMonth)
+            ->whereYear('expense_date', $this->selectedYear)
+            ->when(!empty($this->selectedCategory), function($q) {
+                $q->where('category_id', $this->selectedCategory);
+            })
+            ->when(!empty($this->searchTerm), function($q) {
+                $q->where(function($query) {
+                    $query->where('description', 'like', '%' . $this->searchTerm . '%')
+                          ->orWhere('notes', 'like', '%' . $this->searchTerm . '%');
+                });
+            })
+            ->orderBy('expense_date', 'desc')
+            ->get();
+
+        $monthName = Carbon::createFromDate($this->selectedYear, $this->selectedMonth, 1)->locale('fr')->monthName;
+        $total = $expenses->sum('amount');
+        $categoryTotals = $this->categoryTotals;
+
+        $selectedMonth = $this->selectedMonth;
+        $selectedYear = $this->selectedYear;
+
+        $pdf = Pdf::loadView('exports.expenses-pdf', compact(
+            'expenses', 
+            'monthName', 
+            'total', 
+            'categoryTotals',
+            'selectedMonth',
+            'selectedYear'
+        ));
+
+        $filename = "depenses_{$monthName}_{$this->selectedYear}.pdf";
+        
+        return response()->streamDownload(function() use ($pdf) {
+            echo $pdf->output();
+        }, $filename);
     }
 
     public function deleteExpense($expenseId)
