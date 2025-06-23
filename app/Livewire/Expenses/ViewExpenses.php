@@ -137,7 +137,7 @@ class ViewExpenses extends Component
                           ->orWhere('notes', 'like', '%' . $this->searchTerm . '%');
                 });
             })
-            ->orderBy('expense_date', 'desc')
+            ->orderBy('expense_date', 'asc')
             ->get();
 
         $monthName = Carbon::createFromDate($this->selectedYear, $this->selectedMonth, 1)->locale('fr')->monthName;
