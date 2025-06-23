@@ -98,10 +98,20 @@ class ViewExpenses extends Component
         $this->resetPage();
     }
 
+    public function sortByColumn($field)
+    {
+        if ($this->sortBy === $field) {
+            $this->sortDirection = $this->sortDirection === 'asc' ? 'desc' : 'asc';
+        } else {
+            $this->sortBy = $field;
+            $this->sortDirection = 'asc';
+        }
+        $this->resetPage();
+    }
+    
     public function getExpensesProperty()
     {
         $query = Expense::with('category')
-            ->where('user_id', Auth::id())
             ->whereMonth('expense_date', $this->selectedMonth)
             ->whereYear('expense_date', $this->selectedYear);
 
@@ -112,12 +122,21 @@ class ViewExpenses extends Component
         if (!empty($this->searchTerm)) {
             $query->where(function($q) {
                 $q->where('description', 'like', '%' . $this->searchTerm . '%')
-                  ->orWhere('notes', 'like', '%' . $this->searchTerm . '%');
+                ->orWhere('notes', 'like', '%' . $this->searchTerm . '%');
             });
         }
+        switch ($this->sortBy) {
+            case 'category_name':
+                $query->leftJoin('categories', 'expenses.category_id', '=', 'categories.id')
+                    ->orderBy('categories.name', $this->sortDirection)
+                    ->select('expenses.*');
+                break;
+            default:
+                $query->orderBy($this->sortBy, $this->sortDirection);
+                break;
+        }
 
-        return $query->orderBy($this->sortBy, $this->sortDirection)
-                    ->paginate(10);
+        return $query->paginate(10);
     }
 
     public function getMonthlyTotalProperty()
