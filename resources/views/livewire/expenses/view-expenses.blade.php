@@ -153,20 +153,20 @@
                     <table class="min-w-full divide-y divide-gray-200">
                         <thead class="bg-gray-50">
                             <tr>
-                                <th wire:click="sortBy('expense_date')" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100">
+                                <th wire:click="sortByColumn('expense_date')" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100">
                                     Date
                                     @if($sortBy === 'expense_date')
                                         <span class="ml-1">{{ $sortDirection === 'asc' ? '↑' : '↓' }}</span>
                                     @endif
                                 </th>
-                                <th wire:click="sortBy('description')" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100">
+                                <th wire:click="sortByColumn('description')" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100">
                                     Description
                                     @if($sortBy === 'description')
                                         <span class="ml-1">{{ $sortDirection === 'asc' ? '↑' : '↓' }}</span>
                                     @endif
                                 </th>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Catégorie</th>
-                                <th wire:click="sortBy('amount')" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100">
+                                <th wire:click="sortByColumn('amount')" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100">
                                     Montant
                                     @if($sortBy === 'amount')
                                         <span class="ml-1">{{ $sortDirection === 'asc' ? '↑' : '↓' }}</span>
