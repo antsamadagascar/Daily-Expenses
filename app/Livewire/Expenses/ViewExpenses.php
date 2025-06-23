@@ -98,6 +98,16 @@ class ViewExpenses extends Component
         $this->resetPage();
     }
 
+    public function sortByColumn($field)
+    {
+        if ($this->sortBy === $field) {
+            $this->sortDirection = $this->sortDirection === 'asc' ? 'desc' : 'asc';
+        } else {
+            $this->sortBy = $field;
+            $this->sortDirection = 'asc';
+        }
+        $this->resetPage();
+    }
     public function getExpensesProperty()
     {
         $query = Expense::with('category')
