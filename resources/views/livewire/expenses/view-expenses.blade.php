@@ -165,7 +165,13 @@
                                         <span class="ml-1">{{ $sortDirection === 'asc' ? '↑' : '↓' }}</span>
                                     @endif
                                 </th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Catégorie</th>
+                                <!-- NOUVEAU : Colonne catégorie maintenant triable -->
+                                <th wire:click="sortByColumn('category_name')" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100">
+                                    Catégorie
+                                    @if($sortBy === 'category_name')
+                                        <span class="ml-1">{{ $sortDirection === 'asc' ? '↑' : '↓' }}</span>
+                                    @endif
+                                </th>
                                 <th wire:click="sortByColumn('amount')" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100">
                                     Montant
                                     @if($sortBy === 'amount')
