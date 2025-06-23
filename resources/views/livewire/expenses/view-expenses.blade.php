@@ -198,19 +198,30 @@
                                     {{ number_format($expense->amount, 2) }}Ar
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                    <button wire:click="deleteExpense({{ $expense->id }})" 
-                                            wire:confirm="Êtes-vous sûr de vouloir supprimer cette dépense ?"
-                                            wire:loading.attr="disabled"
-                                            wire:target="deleteExpense({{ $expense->id }})"
-                                            class="text-red-600 hover:text-red-900 disabled:opacity-50">
-                                        <svg wire:loading.remove wire:target="deleteExpense({{ $expense->id }})" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-                                        </svg>
-                                        <svg wire:loading wire:target="deleteExpense({{ $expense->id }})" class="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
-                                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                        </svg>
-                                    </button>
+                                    <div class="flex items-center space-x-2">
+                                        <!-- Bouton Modifier -->
+                                        <button wire:click="editExpense({{ $expense->id }})" 
+                                                class="text-blue-600 hover:text-blue-900">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                                            </svg>
+                                        </button>
+                                        
+                                        <!-- Bouton Supprimer -->
+                                        <button wire:click="deleteExpense({{ $expense->id }})" 
+                                                wire:confirm="Êtes-vous sûr de vouloir supprimer cette dépense ?"
+                                                wire:loading.attr="disabled"
+                                                wire:target="deleteExpense({{ $expense->id }})"
+                                                class="text-red-600 hover:text-red-900 disabled:opacity-50">
+                                            <svg wire:loading.remove wire:target="deleteExpense({{ $expense->id }})" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                            </svg>
+                                            <svg wire:loading wire:target="deleteExpense({{ $expense->id }})" class="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
+                                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                            </svg>
+                                        </button>
+                                    </div>
                                 </td>
                             </tr>
                             @endforeach
@@ -243,4 +254,113 @@
             @endif
         </div>
     </div>
+
+    <!-- Modal d'édition -->
+    @if($showEditModal)
+    <div class="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+        <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+            <!-- Overlay -->
+            <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" 
+                 wire:click="closeEditModal"></div>
+
+            <!-- Modal panel -->
+            <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+                <form wire:submit.prevent="updateExpense">
+                    <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                        <div class="sm:flex sm:items-start">
+                            <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
+                                <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4" id="modal-title">
+                                    Modifier la dépense
+                                </h3>
+                                
+                                <div class="space-y-4">
+                                    <!-- Description -->
+                                    <div>
+                                        <label for="edit_description" class="block text-sm font-medium text-gray-700 mb-1">Description *</label>
+                                        <input type="text" 
+                                               wire:model="editForm.description" 
+                                               id="edit_description"
+                                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 @error('editForm.description') border-red-500 @enderror">
+                                        @error('editForm.description')
+                                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                        @enderror
+                                    </div>
+
+                                    <!-- Montant -->
+                                    <div>
+                                        <label for="edit_amount" class="block text-sm font-medium text-gray-700 mb-1">Montant (Ar) *</label>
+                                        <input type="number" 
+                                               step="0.01" 
+                                               wire:model="editForm.amount" 
+                                               id="edit_amount"
+                                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 @error('editForm.amount') border-red-500 @enderror">
+                                        @error('editForm.amount')
+                                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                        @enderror
+                                    </div>
+
+                                    <!-- Date -->
+                                    <div>
+                                        <label for="edit_expense_date" class="block text-sm font-medium text-gray-700 mb-1">Date *</label>
+                                        <input type="date" 
+                                               wire:model="editForm.expense_date" 
+                                               id="edit_expense_date"
+                                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 @error('editForm.expense_date') border-red-500 @enderror">
+                                        @error('editForm.expense_date')
+                                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                        @enderror
+                                    </div>
+
+                                    <!-- Catégorie -->
+                                    <div>
+                                        <label for="edit_category" class="block text-sm font-medium text-gray-700 mb-1">Catégorie *</label>
+                                        <select wire:model="editForm.category_id" 
+                                                id="edit_category"
+                                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 @error('editForm.category_id') border-red-500 @enderror">
+                                            <option value="">Sélectionner une catégorie</option>
+                                            @foreach($categories as $category)
+                                                <option value="{{ $category->id }}">{{ $category->name }}</option>
+                                            @endforeach
+                                        </select>
+                                        @error('editForm.category_id')
+                                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                        @enderror
+                                    </div>
+
+                                    <!-- Notes -->
+                                    <div>
+                                        <label for="edit_notes" class="block text-sm font-medium text-gray-700 mb-1">Notes</label>
+                                        <textarea wire:model="editForm.notes" 
+                                                  id="edit_notes" 
+                                                  rows="3"
+                                                  class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 @error('editForm.notes') border-red-500 @enderror"
+                                                  placeholder="Notes supplémentaires (optionnel)"></textarea>
+                                        @error('editForm.notes')
+                                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                        @enderror
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                        <button type="submit" 
+                                wire:loading.attr="disabled"
+                                wire:target="updateExpense"
+                                class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:ml-3 sm:w-auto sm:text-sm disabled:opacity-50">
+                            <span wire:loading.remove wire:target="updateExpense">Mettre à jour</span>
+                            <span wire:loading wire:target="updateExpense">Mise à jour...</span>
+                        </button>
+                        <button type="button" 
+                                wire:click="closeEditModal"
+                                class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
+                            Annuler
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    @endif
 </div>
