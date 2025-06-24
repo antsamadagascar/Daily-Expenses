@@ -168,23 +168,30 @@ class ViewExpenses extends Component
     {
         $query = Expense::where('user_id', Auth::id());
 
-        if (!empty($this->selectedDate)) {
-            $query->whereDate('expense_date', $this->selectedDate);
+        if (!empty($this->dateFrom) || !empty($this->dateTo)) {
+            if (!empty($this->dateFrom)) {
+                $query->whereDate('expense_date', '>=', $this->dateFrom);
+            }
+            if (!empty($this->dateTo)) {
+                $query->whereDate('expense_date', '<=', $this->dateTo);
+            }
         } else {
             $query->whereMonth('expense_date', $this->selectedMonth)
-                  ->whereYear('expense_date', $this->selectedYear);
+                ->whereYear('expense_date', $this->selectedYear);
         }
 
-        return $query->when(!empty($this->selectedCategory), function($q) {
-                $q->where('category_id', $this->selectedCategory);
-            })
-            ->when(!empty($this->searchTerm), function($q) {
-                $q->where(function($query) {
-                    $query->where('description', 'like', '%' . $this->searchTerm . '%')
-                          ->orWhere('notes', 'like', '%' . $this->searchTerm . '%');
-                });
-            })
-            ->sum('amount');
+        if (!empty($this->selectedCategory)) {
+            $query->where('category_id', $this->selectedCategory);
+        }
+
+        if (!empty($this->searchTerm)) {
+            $query->where(function ($q) {
+                $q->where('description', 'like', '%' . $this->searchTerm . '%')
+                ->orWhere('notes', 'like', '%' . $this->searchTerm . '%');
+            });
+        }
+
+        return $query->sum('amount');
     }
 
     public function getCategoryTotalsProperty()
