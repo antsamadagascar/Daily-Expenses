@@ -22,6 +22,8 @@ class ViewExpenses extends Component
     public $sortDirection = 'desc';
     public $categories = [];
     public $availableYears = [];
+    public $dateFrom = '';
+    public $dateTo = '';
 
     // Propriétés pour la modal d'édition
     public $showEditModal = false;
@@ -33,6 +35,17 @@ class ViewExpenses extends Component
         'category_id' => '',
         'notes' => ''
     ];
+
+    public function updatedDateFrom()
+    {
+        $this->resetPage();
+    }
+
+    public function updatedDateTo()
+    {
+        $this->resetPage();
+    }
+
 
     protected $rules = [
         'editForm.description' => 'required|string|max:255',
@@ -112,24 +125,36 @@ class ViewExpenses extends Component
     public function getExpensesProperty()
     {
         $query = Expense::with('category')
-            ->whereMonth('expense_date', $this->selectedMonth)
-            ->whereYear('expense_date', $this->selectedYear);
+            ->where('expenses.user_id', Auth::id());
+
+        // Filtre par plage de dates OU par mois/année
+        if (!empty($this->dateFrom) || !empty($this->dateTo)) {
+            if (!empty($this->dateFrom)) {
+                $query->whereDate('expense_date', '>=', $this->dateFrom);
+            }
+            if (!empty($this->dateTo)) {
+                $query->whereDate('expense_date', '<=', $this->dateTo);
+            }
+        } else {
+            $query->whereMonth('expense_date', $this->selectedMonth)
+                  ->whereYear('expense_date', $this->selectedYear);
+        }
 
         if (!empty($this->selectedCategory)) {
-            $query->where('category_id', $this->selectedCategory);
+            $query->where('expenses.category_id', $this->selectedCategory);
         }
 
         if (!empty($this->searchTerm)) {
             $query->where(function($q) {
                 $q->where('description', 'like', '%' . $this->searchTerm . '%')
-                ->orWhere('notes', 'like', '%' . $this->searchTerm . '%');
+                  ->orWhere('notes', 'like', '%' . $this->searchTerm . '%');
             });
         }
         switch ($this->sortBy) {
             case 'category_name':
                 $query->leftJoin('categories', 'expenses.category_id', '=', 'categories.id')
-                    ->orderBy('categories.name', $this->sortDirection)
-                    ->select('expenses.*');
+                      ->orderBy('categories.name', $this->sortDirection)
+                      ->select('expenses.*');
                 break;
             default:
                 $query->orderBy($this->sortBy, $this->sortDirection);
@@ -141,10 +166,16 @@ class ViewExpenses extends Component
 
     public function getMonthlyTotalProperty()
     {
-        return Expense::where('user_id', Auth::id())
-            ->whereMonth('expense_date', $this->selectedMonth)
-            ->whereYear('expense_date', $this->selectedYear)
-            ->when(!empty($this->selectedCategory), function($q) {
+        $query = Expense::where('user_id', Auth::id());
+
+        if (!empty($this->selectedDate)) {
+            $query->whereDate('expense_date', $this->selectedDate);
+        } else {
+            $query->whereMonth('expense_date', $this->selectedMonth)
+                  ->whereYear('expense_date', $this->selectedYear);
+        }
+
+        return $query->when(!empty($this->selectedCategory), function($q) {
                 $q->where('category_id', $this->selectedCategory);
             })
             ->when(!empty($this->searchTerm), function($q) {
@@ -285,6 +316,8 @@ class ViewExpenses extends Component
     {
         $this->selectedCategory = '';
         $this->searchTerm = '';
+        $this->dateFrom = '';      
+        $this->dateTo = '';       
         $this->selectedMonth = Carbon::now()->month;
         $this->selectedYear = Carbon::now()->year;
         $this->resetPage();
