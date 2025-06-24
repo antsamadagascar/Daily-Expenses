@@ -53,21 +53,45 @@
         <div class="px-6 py-6">
             <h3 class="text-xl font-semibold text-gray-900 mb-6">Filtres et Recherche</h3>
             
-            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
-                <!-- Mois -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-6 gap-6">
+                <!-- Date de début  -->
+                <div>
+                    <label for="date_from" class="block text-base font-medium text-gray-800 mb-2">Du</label>
+                    <input wire:model.live="dateFrom" 
+                        type="date" 
+                        id="date_from"
+                        class="form-input w-full px-4 py-2 text-base border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
+                </div>
+
+                <!-- Date de fin -->
+                <div>
+                    <label for="date_to" class="block text-base font-medium text-gray-800 mb-2">Au</label>
+                    <input wire:model.live="dateTo" 
+                        type="date" 
+                        id="date_to"
+                        class="form-input w-full px-4 py-2 text-base border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
+                </div>
+
+                <!-- Mois (désactivé si plage de dates utilisée) -->
                 <div>
                     <label for="month" class="block text-base font-medium text-gray-800 mb-2">Mois</label>
-                    <select wire:model.live="selectedMonth" id="month" class="form-input w-full px-4 py-2 text-base border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
+                    <select wire:model.live="selectedMonth" 
+                            id="month" 
+                            class="form-input w-full px-4 py-2 text-base border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                            {{ (!empty($dateFrom) || !empty($dateTo)) ? 'disabled' : '' }}>
                         @for($i = 1; $i <= 12; $i++)
                             <option value="{{ $i }}">{{ Carbon\Carbon::create()->month($i)->locale('fr')->monthName }}</option>
                         @endfor
                     </select>
                 </div>
 
-                <!-- Année -->
+                <!-- Année (désactivée si plage de dates utilisée) -->
                 <div>
                     <label for="year" class="block text-base font-medium text-gray-800 mb-2">Année</label>
-                    <select wire:model.live="selectedYear" id="year" class="form-input w-full px-4 py-2 text-base border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
+                    <select wire:model.live="selectedYear" 
+                            id="year" 
+                            class="form-input w-full px-4 py-2 text-base border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                            {{ (!empty($dateFrom) || !empty($dateTo)) ? 'disabled' : '' }}>
                         @foreach($availableYears as $year)
                             <option value="{{ $year }}">{{ $year }}</option>
                         @endforeach
@@ -92,6 +116,30 @@
                         placeholder="Description, notes..."
                         class="form-input w-full px-4 py-2 text-base border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
                 </div>
+            </div>
+
+            <!-- Indication du mode de filtre actif -->
+            <div class="mt-4">
+                @if(!empty($dateFrom) || !empty($dateTo))
+                    <div class="bg-blue-50 border border-blue-200 rounded-md p-3">
+                        <p class="text-sm text-blue-800">
+                            <strong>Filtre par dates :</strong>
+                            @if($dateFrom && $dateTo)
+                                Du {{ Carbon\Carbon::parse($dateFrom)->format('d/m/Y') }} au {{ Carbon\Carbon::parse($dateTo)->format('d/m/Y') }}
+                            @elseif($dateFrom)
+                                À partir du {{ Carbon\Carbon::parse($dateFrom)->format('d/m/Y') }}
+                            @elseif($dateTo)
+                                Jusqu'au {{ Carbon\Carbon::parse($dateTo)->format('d/m/Y') }}
+                            @endif
+                        </p>
+                    </div>
+                @else
+                    <div class="bg-gray-50 border border-gray-200 rounded-md p-3">
+                        <p class="text-sm text-gray-600">
+                            <strong>Filtre par mois/année :</strong> {{ ucfirst($monthName) }} {{ $selectedYear }}
+                        </p>
+                    </div>
+                @endif
             </div>
         </div>
     </div>
