@@ -12,10 +12,12 @@ class AddExpense extends Component
 {
     public $expenses = [];
     public $categories = [];
+    public $budgets = [];
 
     protected $rules = [
         'expenses.*.amount' => 'required|numeric|min:0.01|max:30000000 ',
         'expenses.*.description' => 'required|string|max:255',
+        'expenses.*.budget_id' => 'nullable|exists:budgets,id',
         'expenses.*.category_id' => 'required|exists:categories,id',
         'expenses.*.expense_date' => 'required|date|before_or_equal:today',
         'expenses.*.notes' => 'nullable|string|max:1000',
@@ -40,6 +42,14 @@ class AddExpense extends Component
     {
         $this->loadCategories();
         $this->addExpenseRow();
+        $this->loadBudgets();
+    }
+
+    public function loadBudgets() {
+        $this->budgets = \App\Models\Budget::where('user_id', Auth::id())
+            ->where('is_active', true)
+            ->orderBy('start_date', 'desc')
+            ->get();
     }
 
     public function loadCategories()
@@ -56,6 +66,7 @@ class AddExpense extends Component
             'amount' => '',
             'description' => '',
             'category_id' => '',
+            'budget_id' => '',
             'expense_date' => Carbon::today()->format('Y-m-d'),
             'notes' => '',
         ];
@@ -86,6 +97,7 @@ class AddExpense extends Component
                 Expense::create([
                     'user_id' => Auth::id(),
                     'category_id' => $expenseData['category_id'],
+                    'budget_id' => $expenseData['budget_id'] ?? null,
                     'amount' => $expenseData['amount'],
                     'description' => $expenseData['description'],
                     'expense_date' => $expenseData['expense_date'],

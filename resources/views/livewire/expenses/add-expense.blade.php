@@ -125,7 +125,18 @@
                                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                                     @enderror
                                 </div>
-
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">
+                                        Budget *
+                                    </label>
+                                    <select wire:model="expenses.{{ $index }}.budget_id"  class="block w-full px-3 py-2 border @error('expenses.'.$index.'.category_id') border-red-300 @else border-gray-300 @enderror rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                                    >
+                                        <option value="">-- Sélectionner un budget --</option>
+                                        @foreach($budgets as $budget)
+                                            <option value="{{ $budget->id }}">{{ $budget->name }} ({{ $budget->amount }} )</option>
+                                        @endforeach
+                                    </select>                       
+                                </div>
                                 <!-- Date -->
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700 mb-1">
