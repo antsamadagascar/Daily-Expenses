@@ -5,6 +5,7 @@ namespace App\Livewire\Expenses;
 use Livewire\Component;
 use Livewire\WithPagination;
 use App\Models\Expense;
+use App\Models\Budget;
 use App\Models\Category;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
@@ -271,43 +272,43 @@ class ViewExpenses extends Component
 
     public function exportPdf()
     {
+        $monthStart = Carbon::createFromDate($this->selectedYear, $this->selectedMonth, 1)->startOfMonth();
+        $monthEnd = $monthStart->copy()->endOfMonth();
+
         $expenses = Expense::with('category')
             ->where('user_id', Auth::id())
-            ->whereMonth('expense_date', $this->selectedMonth)
-            ->whereYear('expense_date', $this->selectedYear)
-            ->when(!empty($this->selectedCategory), function($q) {
-                $q->where('category_id', $this->selectedCategory);
-            })
-            ->when(!empty($this->searchTerm), function($q) {
+            ->whereBetween('expense_date', [$monthStart, $monthEnd])
+            ->when($this->selectedCategory, fn($q) => $q->where('category_id', $this->selectedCategory))
+            ->when($this->searchTerm, fn($q) =>
                 $q->where(function($query) {
                     $query->where('description', 'like', '%' . $this->searchTerm . '%')
-                          ->orWhere('notes', 'like', '%' . $this->searchTerm . '%');
-                });
-            })
+                        ->orWhere('notes', 'like', '%' . $this->searchTerm . '%');
+                }))
             ->orderBy('expense_date', 'asc')
             ->get();
 
-        $monthName = Carbon::createFromDate($this->selectedYear, $this->selectedMonth, 1)->locale('fr')->monthName;
+        $budgetIds = $expenses->pluck('budget_id')->unique()->filter(); 
+        $budgets = \App\Models\Budget::whereIn('id', $budgetIds)->get();
+
+        $monthName = $monthStart->locale('fr')->monthName;
         $total = $expenses->sum('amount');
         $categoryTotals = $this->categoryTotals;
-
         $selectedMonth = $this->selectedMonth;
         $selectedYear = $this->selectedYear;
 
         $pdf = Pdf::loadView('exports.expenses-pdf', compact(
-            'expenses', 
-            'monthName', 
-            'total', 
+            'expenses',
+            'monthName',
+            'total',
             'categoryTotals',
             'selectedMonth',
-            'selectedYear'
+            'selectedYear',
+            'budgets'
         ));
 
-        $filename = "depenses_{$monthName}_{$this->selectedYear}.pdf";
-        
         return response()->streamDownload(function() use ($pdf) {
             echo $pdf->output();
-        }, $filename);
+        }, "depenses_{$monthName}_{$this->selectedYear}.pdf");
     }
 
     public function deleteExpense($expenseId)
