@@ -153,6 +153,59 @@
         <p>Généré le {{ \Carbon\Carbon::now()->format('d/m/Y à H:i') }}</p>
     </div>
 
+    @if($budgets->count())
+        @php
+            $totalAllocated = 0;
+            $totalUsed = 0;
+            $totalRemaining = 0;
+        @endphp
+
+        <h2 style="margin-top: 40px; font-size: 20px; border-bottom: 1px solid #ccc; padding-bottom: 5px;">
+            Suivi des Budgets
+        </h2>
+
+        <table class="budget-table" style="width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 14px;">
+            <thead>
+                <tr style="background-color: #f3f4f6; text-align: left;">
+                    <th style="padding: 8px; border-bottom: 1px solid #ccc;">Nom</th>
+                    <th style="padding: 8px; border-bottom: 1px solid #ccc;">Montant alloué</th>
+                    <th style="padding: 8px; border-bottom: 1px solid #ccc;">Utilisé</th>
+                    <th style="padding: 8px; border-bottom: 1px solid #ccc;">Reste</th>
+                    <th style="padding: 8px; border-bottom: 1px solid #ccc;">Période</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach($budgets as $budget)
+                    @php
+                        $used = $expenses->where('budget_id', $budget->id)->sum('amount');
+                        $left = $budget->amount - $used;
+                        $totalAllocated += $budget->amount;
+                        $totalUsed += $used;
+                        $totalRemaining += $left;
+                    @endphp
+                    <tr>
+                        <td style="padding: 6px; border-bottom: 1px solid #eee;">{{ $budget->name }}</td>
+                        <td style="padding: 6px; border-bottom: 1px solid #eee;">{{ number_format($budget->amount, 2) }}Ar</td>
+                        <td style="padding: 6px; border-bottom: 1px solid #eee;">{{ number_format($used, 2) }}Ar</td>
+                        <td style="padding: 6px; border-bottom: 1px solid #eee;">{{ number_format($left, 2) }}Ar</td>
+                        <td style="padding: 6px; border-bottom: 1px solid #eee;">
+                            {{ \Carbon\Carbon::parse($budget->start_date)->format('d/m/Y') }} - 
+                            {{ \Carbon\Carbon::parse($budget->end_date)->format('d/m/Y') }}
+                        </td>
+                    </tr>
+                @endforeach
+
+                <tr style="font-weight: bold; background-color: #f9fafb;">
+                    <td style="padding: 8px; border-top: 2px solid #ccc;">Total général</td>
+                    <td style="padding: 8px; border-top: 2px solid #ccc;">{{ number_format($totalAllocated, 2) }}Ar</td>
+                    <td style="padding: 8px; border-top: 2px solid #ccc;">{{ number_format($totalUsed, 2) }}Ar</td>
+                    <td style="padding: 8px; border-top: 2px solid #ccc;">{{ number_format($totalRemaining, 2) }}Ar</td>
+                    <td style="padding: 8px; border-top: 2px solid #ccc;">—</td>
+                </tr>
+            </tbody>
+        </table>
+    @endif
+
     <!-- Résumé -->
     <div class="summary">
         <div class="summary-grid">
