@@ -88,18 +88,18 @@
                     <!-- Montants -->
                     <div class="flex justify-between text-sm">
                         <span class="text-gray-600">Budget:</span>
-                        <span class="font-medium">{{ number_format($budget->amount, 2) }} €</span>
+                        <span class="font-medium">{{ number_format($budget->amount, 2) }} Ar</span>
                     </div>
                     <div class="flex justify-between text-sm">
                         <span class="text-gray-600">Dépensé:</span>
                         <span class="font-medium {{ $budget->is_over_budget ? 'text-red-600' : '' }}">
-                            {{ number_format($budget->spent_amount, 2) }} €
+                            {{ number_format($budget->spent_amount, 2) }} Ar
                         </span>
                     </div>
                     <div class="flex justify-between text-sm">
                         <span class="text-gray-600">Restant:</span>
                         <span class="font-medium {{ $budget->remaining_amount < 0 ? 'text-red-600' : 'text-green-600' }}">
-                            {{ number_format($budget->remaining_amount, 2) }} €
+                            {{ number_format($budget->remaining_amount, 2) }} Ar
                         </span>
                     </div>
 
