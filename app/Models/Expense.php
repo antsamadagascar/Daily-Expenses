@@ -14,7 +14,7 @@ class Expense extends Model
     protected $fillable = [
         'user_id',
         'category_id',
-        'budget_id', // Ajout du budget_id
+        'budget_id',
         'amount',
         'description',
         'expense_date',

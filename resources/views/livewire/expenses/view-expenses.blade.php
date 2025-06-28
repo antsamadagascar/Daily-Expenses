@@ -46,6 +46,49 @@
                 </div>
             </div>
         </div>
+        
+        <!-- Résumé des budgets utilisés -->
+        <div class="bg-green-50 rounded-lg p-4 mb-6">
+            <h3 class="text-lg font-medium text-green-900 mb-4">Budgets utilisés ce mois</h3>
+
+            @php
+                $budgetsUtilises = $expenses->pluck('budget')->filter()->unique('id');
+            @endphp
+
+            @forelse ($budgetsUtilises as $budget)
+                <div class="mb-3 border border-green-200 rounded-md p-3 bg-white shadow-sm">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <p class="text-sm text-gray-500">Budget : <span class="font-semibold text-gray-800">{{ $budget->name }}</span></p>
+                            <p class="text-sm text-gray-500">Montant alloué : <span class="font-semibold text-gray-800">{{ number_format($budget->amount, 0, ',', ' ') }} Ar</span></p>
+                            <p class="text-sm text-gray-500">Dépensé : 
+                                <span class="font-semibold text-gray-800">
+                                    {{ number_format($budget->expenses->whereBetween('expense_date', [
+                                        \Carbon\Carbon::create($selectedYear, $selectedMonth, 1),
+                                        \Carbon\Carbon::create($selectedYear, $selectedMonth, 1)->endOfMonth()
+                                    ])->sum('amount'), 0, ',', ' ') }} Ar
+                                </span>
+                            </p>
+                            <p class="text-sm text-gray-500">Reste :
+                                <span class="font-semibold text-gray-800">
+                                    {{ number_format($budget->amount - $budget->expenses->whereBetween('expense_date', [
+                                        \Carbon\Carbon::create($selectedYear, $selectedMonth, 1),
+                                        \Carbon\Carbon::create($selectedYear, $selectedMonth, 1)->endOfMonth()
+                                    ])->sum('amount'), 0, ',', ' ') }} Ar
+                                </span>
+                            </p>
+                        </div>
+                        <div class="text-green-600">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h11M9 21V3m0 0L5 7m4-4l4 4"></path>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+            @empty
+                <p class="text-sm text-gray-500">Aucun budget utilisé ce mois.</p>
+            @endforelse
+        </div>
     </div>
 
     <!-- Filtres -->

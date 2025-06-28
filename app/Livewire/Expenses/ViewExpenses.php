@@ -124,8 +124,9 @@ class ViewExpenses extends Component
     
     public function getExpensesProperty()
     {
-        $query = Expense::with('category')
-            ->where('expenses.user_id', Auth::id());
+        $query = Expense::with(['category', 'budget.expenses']);
+
+
 
         // Filtre par plage de dates OU par mois/année
         if (!empty($this->dateFrom) || !empty($this->dateTo)) {
