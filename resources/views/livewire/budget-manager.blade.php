@@ -37,17 +37,6 @@
                     <option value="inactive">Inactifs</option>
                 </select>
             </div>
-
-            <!-- Filtre catégorie -->
-            <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Catégorie</label>
-                <select wire:model.live="filterCategory" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-                    <option value="">Toutes les catégories</option>
-                    @foreach($categories as $category)
-                        <option value="{{ $category->id }}">{{ $category->name }}</option>
-                    @endforeach
-                </select>
-            </div>
         </div>
     </div>
 
@@ -72,7 +61,6 @@
                 <div class="flex justify-between items-start mb-4">
                     <div class="flex-1">
                         <h3 class="text-lg font-semibold text-gray-900">{{ $budget->name }}</h3>
-                        <p class="text-sm text-gray-600">{{ $budget->category->name }}</p>
                         @if($budget->description)
                             <p class="text-sm text-gray-500 mt-1">{{ $budget->description }}</p>
                         @endif
@@ -224,20 +212,6 @@
                                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 @error('amount') border-red-500 @enderror"
                                        placeholder="0.00">
                                 @error('amount')
-                                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                                @enderror
-                            </div>
-
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Catégorie *</label>
-                                <select wire:model="category_id" 
-                                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 @error('category_id') border-red-500 @enderror">
-                                    <option value="">Sélectionner une catégorie</option>
-                                    @foreach($categories as $category)
-                                        <option value="{{ $category->id }}">{{ $category->name }}</option>
-                                    @endforeach
-                                </select>
-                                @error('category_id')
                                     <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                                 @enderror
                             </div>
