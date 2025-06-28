@@ -221,7 +221,8 @@ class ViewExpenses extends Component
                 'amount' => $expense->amount,
                 'expense_date' => $expense->expense_date->format('Y-m-d'),
                 'category_id' => $expense->category_id,
-                'notes' => $expense->notes ?? ''
+                'notes' => $expense->notes ?? '',
+                'budget_id' => $expense->budget_id
             ];
             $this->showEditModal = true;
         }
@@ -242,7 +243,8 @@ class ViewExpenses extends Component
                 'amount' => $this->editForm['amount'],
                 'expense_date' => $this->editForm['expense_date'],
                 'category_id' => $this->editForm['category_id'],
-                'notes' => $this->editForm['notes']
+                'notes' => $this->editForm['notes'],
+                'budget_id' => $this->editForm['budget_id']
             ]);
 
             $this->closeEditModal();
@@ -261,7 +263,8 @@ class ViewExpenses extends Component
             'amount' => '',
             'expense_date' => '',
             'category_id' => '',
-            'notes' => ''
+            'notes' => '',
+            'budget_id' => '', 
         ];
         $this->resetErrorBag();
     }

@@ -423,7 +423,21 @@
                                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                                         @enderror
                                     </div>
-
+                                     <!-- Budget lié -->
+                                    <div>
+                                        <label for="edit_budget" class="block text-sm font-medium text-gray-700 mb-1">Budget lié (optionnel)</label>
+                                        <select wire:model="editForm.budget_id" 
+                                                id="edit_budget"
+                                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 @error('editForm.budget_id') border-red-500 @enderror">
+                                            <option value="">Aucun budget</option>
+                                            @foreach(App\Models\Budget::forUser(Auth::id())->orderBy('start_date', 'desc')->get() as $budget)
+                                                <option value="{{ $budget->id }}">{{ $budget->name }} ({{ \Carbon\Carbon::parse($budget->start_date)->format('d/m/Y') }})</option>
+                                            @endforeach
+                                        </select>
+                                        @error('editForm.budget_id')
+                                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                        @enderror
+                                    </div>
                                     <!-- Notes -->
                                     <div>
                                         <label for="edit_notes" class="block text-sm font-medium text-gray-700 mb-1">Notes</label>
