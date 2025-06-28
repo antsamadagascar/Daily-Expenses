@@ -21,7 +21,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/expenses/add', AddExpense::class)->name('expenses.add');
     Route::get('/expenses', ViewExpenses::class)->name('expenses.view');
 });
-
+Route::get('/budgets', App\Livewire\BudgetManager::class)->name('budgets.index');
 // Redirection automatique vers dashboard si connecté
 Route::get('/home', function () {
     return redirect()->route('dashboard');
