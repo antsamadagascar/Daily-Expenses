@@ -29,6 +29,15 @@
                                 </svg>
                                 Tableau de bord
                             </a>
+                            <a href="{{ route('budgets.index') }}"
+                            class="flex items-center px-4 py-2 rounded-md text-sm font-medium transition
+                                    {{ request()->routeIs('budgets.index') ? 'bg-blue-100 text-blue-600' : 'text-gray-900 hover:text-blue-600 hover:bg-gray-100' }}">
+                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v2m14 0H3m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2h14z"/>
+                                </svg>
+                                Budget
+                            </a>
                             <a href="{{ route('expenses.view') }}"
                                class="text-gray-900 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium {{ request()->routeIs('expenses.view') ? 'bg-blue-100 text-blue-600' : '' }}">
                                 <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">

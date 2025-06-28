@@ -14,7 +14,7 @@ class AddExpense extends Component
     public $categories = [];
 
     protected $rules = [
-        'expenses.*.amount' => 'required|numeric|min:0.01|max:999999.99',
+        'expenses.*.amount' => 'required|numeric|min:0.01|max:30000000 ',
         'expenses.*.description' => 'required|string|max:255',
         'expenses.*.category_id' => 'required|exists:categories,id',
         'expenses.*.expense_date' => 'required|date|before_or_equal:today',
