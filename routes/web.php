@@ -5,6 +5,7 @@ use App\Livewire\Auth\Login;
 use App\Livewire\Dashboard;
 use App\Livewire\Expenses\AddExpense;
 use App\Livewire\Expenses\ViewExpenses;
+use App\Livewire\System\ResetData;
 
 // Routes publiques
 Route::get('/', function () {
@@ -22,6 +23,12 @@ Route::middleware('auth')->group(function () {
     Route::get('/expenses', ViewExpenses::class)->name('expenses.view');
 });
 Route::get('/budgets', App\Livewire\BudgetManager::class)->name('budgets.index');
+
+
+Route::get('/system/reset-data', ResetData::class)
+    ->middleware(['auth'])  
+    ->name('system.reset-data');
+
 // Redirection automatique vers dashboard si connecté
 Route::get('/home', function () {
     return redirect()->route('dashboard');
