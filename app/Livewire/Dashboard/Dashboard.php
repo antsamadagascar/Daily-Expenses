@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire;
+namespace App\Livewire\Dashboard;
 
 use Livewire\Component;
 use App\Models\Expense;
@@ -13,7 +13,7 @@ class Dashboard extends Component
  
     public function render()
     {
-        return view('livewire.dashboard', [
+        return view('livewire.dashboard.dashboard', [
             'currentMonthExpenses' => $this->currentMonthExpenses,
             'currentMonthCount' => $this->currentMonthCount,
             'dailyAverage' => $this->dailyAverage,
