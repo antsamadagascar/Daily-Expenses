@@ -382,4 +382,44 @@ class ViewExpenses extends Component
             ->pluck('year')
             ->toArray();
     }
+
+    public function filterExpense($expense)
+    {
+        $date = \Carbon\Carbon::parse($expense->expense_date)->format('Y-m-d');
+
+        if ($this->dateFrom && $this->dateTo && $this->dateFrom === $this->dateTo) {
+            if ($date !== $this->dateFrom) return false;
+        } elseif ($this->dateFrom && $this->dateTo) {
+            if ($date < $this->dateFrom || $date > $this->dateTo) return false;
+        } elseif ($this->dateFrom) {
+            if ($date < $this->dateFrom) return false;
+        } elseif ($this->dateTo) {
+            if ($date > $this->dateTo) return false;
+        } else {
+            if ((int) \Carbon\Carbon::parse($expense->expense_date)->month !== (int) $this->selectedMonth) return false;
+            if ((int) \Carbon\Carbon::parse($expense->expense_date)->year !== (int) $this->selectedYear) return false;
+        }
+
+        if (!empty($this->selectedCategory) && $expense->category_id != $this->selectedCategory) return false;
+
+        if (!empty($this->searchTerm)) {
+            $content = strtolower($expense->description . ' ' . $expense->notes);
+            if (!str_contains($content, strtolower($this->searchTerm))) return false;
+        }
+
+        return true;
+    }
+
+    public function getBudgetUsage($budget)
+    {
+        $filteredExpenses = $budget->expenses->filter(fn($e) => $this->filterExpense($e));
+        $usedAmount = $filteredExpenses->sum('amount');
+        $remainingAmount = $budget->amount - $usedAmount;
+
+        return [
+            'used' => $usedAmount,
+            'remaining' => $remainingAmount,
+        ];
+    }
+
 }
