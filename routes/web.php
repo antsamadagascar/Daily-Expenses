@@ -6,6 +6,7 @@ use App\Livewire\Dashboard;
 use App\Livewire\Expenses\AddExpense;
 use App\Livewire\Expenses\ViewExpenses;
 use App\Livewire\System\ResetData;
+use App\Livewire\Budget\BudgetManager;
 
 // Routes publiques
 Route::get('/', function () {
@@ -22,7 +23,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/expenses/add', AddExpense::class)->name('expenses.add');
     Route::get('/expenses', ViewExpenses::class)->name('expenses.view');
 });
-Route::get('/budgets', App\Livewire\BudgetManager::class)->name('budgets.index');
+Route::get('/budgets', BudgetManager::class)->name('budgets.index');
 
 
 Route::get('/system/reset-data', ResetData::class)

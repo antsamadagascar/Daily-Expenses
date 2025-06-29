@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire;
+namespace App\Livewire\Budget;
 
 use App\Models\Budget;
 use Livewire\Component;
