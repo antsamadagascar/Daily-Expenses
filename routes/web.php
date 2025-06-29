@@ -2,11 +2,11 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Livewire\Auth\Login;
-use App\Livewire\Dashboard;
 use App\Livewire\Expenses\AddExpense;
 use App\Livewire\Expenses\ViewExpenses;
 use App\Livewire\System\ResetData;
 use App\Livewire\Budget\BudgetManager;
+use App\Livewire\Dashboard\Dashboard;
 
 // Routes publiques
 Route::get('/', function () {
