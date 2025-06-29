@@ -198,15 +198,39 @@ class ViewExpenses extends Component
 
     public function getCategoryTotalsProperty()
     {
-        return Expense::with('category')
-            ->where('user_id', Auth::id())
-            ->whereMonth('expense_date', $this->selectedMonth)
-            ->whereYear('expense_date', $this->selectedYear)
-            ->selectRaw('category_id, SUM(amount) as total')
+        $query = Expense::with('category')
+            ->where('user_id', Auth::id());
+
+        if (!empty($this->dateFrom)) {
+            $query->whereDate('expense_date', '>=', $this->dateFrom);
+        }
+
+        if (!empty($this->dateTo)) {
+            $query->whereDate('expense_date', '<=', $this->dateTo);
+        }
+
+        if (empty($this->dateFrom) && empty($this->dateTo)) {
+            $query->whereMonth('expense_date', $this->selectedMonth)
+                ->whereYear('expense_date', $this->selectedYear);
+        }
+
+        if (!empty($this->selectedCategory)) {
+            $query->where('category_id', $this->selectedCategory);
+        }
+
+        if (!empty($this->searchTerm)) {
+            $query->where(function ($q) {
+                $q->where('description', 'like', '%' . $this->searchTerm . '%')
+                ->orWhere('notes', 'like', '%' . $this->searchTerm . '%');
+            });
+        }
+
+        return $query->selectRaw('category_id, SUM(amount) as total')
             ->groupBy('category_id')
             ->orderByDesc('total')
             ->get();
     }
+
 
     //  méthode pour ouvrir la modal d'édition
     public function editExpense($expenseId)
