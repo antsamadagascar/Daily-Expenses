@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire;
+namespace App\Livewire\Budget;
 
 use App\Models\Budget;
 use Livewire\Component;
@@ -69,7 +69,7 @@ class BudgetManager extends Component
             ->orderBy('created_at', 'desc')
             ->paginate(10);
 
-        return view('livewire.budget-manager', [
+        return view('livewire.budget.budget', [
             'budgets' => $budgets
         ])->layout('layouts.app');
     }
