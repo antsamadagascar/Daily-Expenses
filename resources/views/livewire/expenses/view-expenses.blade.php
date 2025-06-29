@@ -48,8 +48,10 @@
         </div>
         
         <!-- Résumé des budgets utilisés -->
-        <div class="bg-green-50 rounded-lg p-4 mb-6">
-            <h3 class="text-lg font-medium text-green-900 mb-4">Budgets utilisés ce mois</h3>
+        <div class="bg-green-50 rounded-xl p-6 mb-8 shadow-inner">
+            <h3 class="text-xl font-semibold text-green-900 mb-6 border-b border-green-200 pb-2">
+                Budgets utilisés ce mois
+            </h3>
 
             @php
                 $budgetsUtilises = $expenses->pluck('budget')->filter()->unique('id');
@@ -60,24 +62,28 @@
                     $usage = $this->getBudgetUsage($budget);
                 @endphp
 
-                <div class="mb-3 border border-green-200 rounded-md p-3 bg-white shadow-sm">
-                    <div class="flex justify-between items-center">
-                        <div>
-                            <p class="text-sm text-gray-500">Budget :
-                                <span class="font-semibold text-gray-800">{{ $budget->name }}</span>
+                <div class="mb-4 border border-green-300 rounded-lg p-4 bg-white shadow-sm">
+                    <div class="flex flex-col sm:flex-row justify-between gap-4">
+                        <div class="space-y-1">
+                            <p class="text-sm text-gray-600">
+                                <span class="font-medium text-gray-800">Budget :</span>
+                                {{ $budget->name }}
                             </p>
-                            <p class="text-sm text-gray-500">Montant alloué :
-                                <span class="font-semibold text-gray-800">{{ number_format($budget->amount, 0, ',', ' ') }} Ar</span>
+                            <p class="text-sm text-gray-600">
+                                <span class="font-medium text-gray-800">Montant alloué :</span>
+                                {{ number_format($budget->amount, 0, ',', ' ') }} Ar
                             </p>
-                            <p class="text-sm text-gray-500">Dépensé :
-                                <span class="font-semibold text-gray-800">{{ number_format($usage['used'], 0, ',', ' ') }} Ar</span>
+                            <p class="text-sm text-gray-600">
+                                <span class="font-medium text-gray-800">Dépensé :</span>
+                                {{ number_format($usage['used'], 0, ',', ' ') }} Ar
                             </p>
-                            <p class="text-sm text-gray-500">Reste :
-                                <span class="font-semibold text-gray-800">{{ number_format($usage['remaining'], 0, ',', ' ') }} Ar</span>
+                            <p class="text-sm text-gray-600">
+                                <span class="font-medium text-gray-800">Reste :</span>
+                                {{ number_format($usage['remaining'], 0, ',', ' ') }} Ar
                             </p>
                         </div>
-                        <div class="text-green-600">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div class="flex items-center text-green-600">
+                            <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M3 10h11M9 21V3m0 0L5 7m4-4l4 4"></path>
                             </svg>
@@ -85,9 +91,10 @@
                     </div>
                 </div>
             @empty
-                <p class="text-sm text-gray-500">Aucun budget utilisé ce mois.</p>
+                <p class="text-sm text-gray-500 italic">Aucun budget utilisé ce mois.</p>
             @endforelse
     </div>
+
 
     <!-- Filtres -->
     <div class="bg-white overflow-hidden shadow rounded-lg">
