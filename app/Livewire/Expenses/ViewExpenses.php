@@ -328,7 +328,11 @@ class ViewExpenses extends Component
             'selectedMonth',
             'selectedYear',
             'budgets'
-        ));
+        ))->setPaper('a4', 'portrait')
+        ->setOptions([
+            'isHtml5ParserEnabled' => true,
+            'isPhpEnabled' => true
+        ]);
 
         return response()->streamDownload(function() use ($pdf) {
             echo $pdf->output();
