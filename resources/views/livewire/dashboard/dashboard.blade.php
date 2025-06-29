@@ -283,14 +283,14 @@
     </div>
 
     <script>
+    (() => {
         Chart.defaults.font.family = 'system-ui, -apple-system, sans-serif';
         Chart.defaults.color = '#6B7280';
-        
+
         const monthlyData = @json($monthlyEvolution);
         const categoryData = @json($categoryDistribution);
         const weeklyData = @json($weeklyTrend);
 
-        // Graphique d'évolution mensuelle
         const monthlyCtx = document.getElementById('monthlyChart').getContext('2d');
         new Chart(monthlyCtx, {
             type: 'line',
@@ -314,9 +314,7 @@
                 responsive: true,
                 maintainAspectRatio: false,
                 plugins: {
-                    legend: {
-                        display: false
-                    },
+                    legend: { display: false },
                     tooltip: {
                         backgroundColor: 'rgba(0, 0, 0, 0.8)',
                         titleColor: '#ffffff',
@@ -324,44 +322,30 @@
                         cornerRadius: 8,
                         displayColors: false,
                         callbacks: {
-                            label: function(context) {
-                                return context.parsed.y.toLocaleString() + ' Ar';
-                            }
+                            label: context => context.parsed.y.toLocaleString() + ' Ar'
                         }
                     }
                 },
                 scales: {
                     x: {
-                        grid: {
-                            display: false
-                        },
-                        ticks: {
-                            maxRotation: 45
-                        }
+                        grid: { display: false },
+                        ticks: { maxRotation: 45 }
                     },
                     y: {
                         beginAtZero: true,
-                        grid: {
-                            color: 'rgba(0, 0, 0, 0.05)'
-                        },
+                        grid: { color: 'rgba(0, 0, 0, 0.05)' },
                         ticks: {
-                            callback: function(value) {
-                                return value.toLocaleString() + ' Ar';
-                            }
+                            callback: value => value.toLocaleString() + ' Ar'
                         }
                     }
                 },
-                interaction: {
-                    intersect: false,
-                    mode: 'index'
-                }
+                interaction: { intersect: false, mode: 'index' }
             }
         });
 
-        // Graphique de distribution par catégorie
         const categoryCtx = document.getElementById('categoryChart').getContext('2d');
         const totalCategoryAmount = categoryData.reduce((sum, item) => sum + item.total, 0);
-        
+
         new Chart(categoryCtx, {
             type: 'doughnut',
             data: {
@@ -384,7 +368,7 @@
                         labels: {
                             usePointStyle: true,
                             padding: 20,
-                            generateLabels: function(chart) {
+                            generateLabels: chart => {
                                 const data = chart.data;
                                 return data.labels.map((label, index) => {
                                     const value = data.datasets[0].data[index];
@@ -393,7 +377,7 @@
                                         text: `${label} (${percentage}%)`,
                                         fillStyle: data.datasets[0].backgroundColor[index],
                                         hidden: false,
-                                        index: index
+                                        index
                                     };
                                 });
                             }
@@ -406,7 +390,7 @@
                         cornerRadius: 8,
                         displayColors: true,
                         callbacks: {
-                            label: function(context) {
+                            label: context => {
                                 const percentage = ((context.parsed / totalCategoryAmount) * 100).toFixed(1);
                                 return `${context.label}: ${context.parsed.toLocaleString()} Ar (${percentage}%)`;
                             }
@@ -416,7 +400,6 @@
             }
         });
 
-        // Graphique de tendance hebdomadaire
         const weeklyCtx = document.getElementById('weeklyChart').getContext('2d');
         new Chart(weeklyCtx, {
             type: 'bar',
@@ -436,9 +419,7 @@
                 responsive: true,
                 maintainAspectRatio: false,
                 plugins: {
-                    legend: {
-                        display: false
-                    },
+                    legend: { display: false },
                     tooltip: {
                         backgroundColor: 'rgba(0, 0, 0, 0.8)',
                         titleColor: '#ffffff',
@@ -446,40 +427,26 @@
                         cornerRadius: 8,
                         displayColors: false,
                         callbacks: {
-                            label: function(context) {
-                                return context.parsed.y.toLocaleString() + ' Ar';
-                            }
+                            label: context => context.parsed.y.toLocaleString() + ' Ar'
                         }
                     }
                 },
                 scales: {
                     x: {
-                        grid: {
-                            display: false
-                        },
-                        ticks: {
-                            maxRotation: 45,
-                            font: {
-                                size: 11
-                            }
-                        }
+                        grid: { display: false },
+                        ticks: { maxRotation: 45, font: { size: 11 } }
                     },
                     y: {
                         beginAtZero: true,
-                        grid: {
-                            color: 'rgba(0, 0, 0, 0.05)'
-                        },
+                        grid: { color: 'rgba(0, 0, 0, 0.05)' },
                         ticks: {
-                            callback: function(value) {
-                                return value.toLocaleString() + ' Ar';
-                            }
+                            callback: value => value.toLocaleString() + ' Ar'
                         }
                     }
                 }
             }
         });
 
-        // Animations d'entrée pour les cartes
         function animateCards() {
             const cards = document.querySelectorAll('.card-hover');
             cards.forEach((card, index) => {
@@ -493,29 +460,22 @@
             });
         }
 
-        // Initialisation des animations
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', () => {
             animateCards();
         });
 
-        // Fonction pour rafraîchir les données
         function refreshDashboard() {
             console.log('Rafraîchissement du tableau de bord...');
         }
 
-        // Fonction pour exporter les données
         function exportData(format) {
             const data = {
                 monthly: monthlyData,
                 categories: categoryData,
                 weekly: weeklyData,
-                format: format
+                format
             };
-            
-            // Création d'un blob pour le téléchargement
-            const blob = new Blob([JSON.stringify(data, null, 2)], {
-                type: 'application/json'
-            });
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
@@ -526,30 +486,18 @@
             URL.revokeObjectURL(url);
         }
 
-        // Gestion des interactions
-        document.addEventListener('click', function(e) {
-            // Gestion du bouton d'export
+        document.addEventListener('click', e => {
             if (e.target.textContent.trim() === 'Exporter') {
                 e.preventDefault();
                 const format = prompt('Format d\'export (json, csv, xlsx):', 'json');
-                if (format) {
-                    exportData(format);
-                }
+                if (format) exportData(format);
             }
-            
-            // Gestion des boutons de période
             if (e.target.classList.contains('period-btn')) {
                 e.preventDefault();
-                const period = e.target.dataset.period;
-                 Livewire.emit('changePeriod', period);
+                Livewire.emit('changePeriod', e.target.dataset.period);
             }
         });
 
-        // Responsive behavior pour les graphiques
-        window.addEventListener('resize', function() {
-        });
-
-        // Fonction utilitaire pour formater les nombres
         function formatNumber(num) {
             return new Intl.NumberFormat('fr-FR', {
                 minimumFractionDigits: 2,
@@ -557,12 +505,10 @@
             }).format(num);
         }
 
-        // Fonction pour calculer les pourcentages
         function calculatePercentage(value, total) {
             return total > 0 ? ((value / total) * 100).toFixed(1) : 0;
         }
 
-        // Notification toast (optionnel)
         function showToast(message, type = 'info') {
             const toast = document.createElement('div');
             toast.className = `fixed top-4 right-4 p-4 rounded-lg shadow-lg z-50 transition-all duration-300 ${
@@ -573,16 +519,13 @@
             }`;
             toast.textContent = message;
             document.body.appendChild(toast);
-            
             setTimeout(() => {
                 toast.style.opacity = '0';
                 toast.style.transform = 'translateX(100%)';
-                setTimeout(() => {
-                    document.body.removeChild(toast);
-                }, 300);
+                setTimeout(() => document.body.removeChild(toast), 300);
             }, 3000);
         }
-        
-    </script>
+    })();
+</script>
 </body>
 </html>
