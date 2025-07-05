@@ -1,11 +1,5 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - Gestion des Dépenses</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+<div>
+    @livewireStyles
     <style>
         .card-hover {
             transition: all 0.3s ease;
@@ -44,12 +38,19 @@
                     <p class="text-gray-600 mt-2">Aperçu de vos dépenses et budgets</p>
                 </div>
                 <div class="flex space-x-2 mt-4 sm:mt-0">
+                    <select wire:model.live="selectedYear" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition">
+                        @foreach($availableYears as $year)
+                            <option value="{{ $year }}">{{ $year }}</option>
+                        @endforeach
+                    </select>
+                    <select wire:model.live="selectedMonth" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition">
+                        @foreach(range(1, 12) as $month)
+                            <option value="{{ $month }}">{{ \Carbon\Carbon::create()->month($month)->format('F') }}</option>
+                        @endforeach
+                    </select>
                     <button class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition">
                         Exporter
                     </button>
-                    <!-- <button class="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition">
-                        Filtrer
-                    </button> -->
                 </div>
             </div>
         </div>
@@ -138,7 +139,6 @@
             </div>
         </div>
 
-
         <div class="mb-8 p-6 bg-white rounded-xl shadow-sm max-w-md">
             <h3 class="text-lg font-semibold text-gray-900 mb-4">Comparaison Annuelle</h3>
                 <p><strong>Année en cours :</strong> {{ number_format($yearlyComparison['current_year'], 2, ',', ' ') }} Ar</p>
@@ -150,7 +150,6 @@
                         $percentage = $yearlyComparison['percentage'];
                         $absPrevYear = abs($yearlyComparison['previous_year']);
                     @endphp
-
                     @if($absPrevYear < 1000)
                         <span class="text-red-500 font-semibold">Variation trop élevée ou non significative</span>
                     @else
@@ -159,7 +158,6 @@
                         </span>
                     @endif
                 </p>
-
                 @if($absPrevYear < 1000)
                     <p class="mt-4 text-sm text-gray-600 italic">
                         Note : La variation en pourcentage est élevée car le total de l’année précédente est très faible, ce qui amplifie le pourcentage.  
@@ -178,10 +176,9 @@
                         <button class="text-sm px-3 py-1 bg-blue-100 text-blue-700 rounded-md">12 mois</button>
                     </div>
                 </div>
-               <div class="chart-container" style="height: 300px;">
+                <div class="chart-container" style="height: 300px;">
                     <canvas id="monthlyChart"></canvas>
                 </div>
-
             </div>
 
             <!-- Distribution par catégorie -->
@@ -289,12 +286,12 @@
         <div class="bg-white rounded-xl p-6 shadow-sm">
             <h3 class="text-lg font-semibold text-gray-900 mb-4">Actions rapides</h3>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                 <a href="{{ route('budgets.index') }}"class="flex items-center justify-center px-6 py-4 bg-green-600 text-white rounded-lg hover:bg-green-700 transition">
+                <a href="{{ route('budgets.index') }}" class="flex items-center justify-center px-6 py-4 bg-green-600 text-white rounded-lg hover:bg-green-700 transition">
                     <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
                     </svg>
                     Créer un budget
-                 </a>
+                </a>
                 <a href="{{ route('expenses.view') }}" class="flex items-center justify-center px-6 py-4 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition">
                     <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
@@ -311,6 +308,8 @@
         </div>
     </div>
 
+    @livewireScripts
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
     <script>
     (() => {
         Chart.defaults.font.family = 'system-ui, -apple-system, sans-serif';
@@ -405,7 +404,6 @@
                                     const percentage = totalCategoryAmount > 0
                                         ? ((value / totalCategoryAmount) * 100).toFixed(1)
                                         : '0.0';
-
                                     return {
                                         text: `${label} (${percentage}%)`,
                                         fillStyle: data.datasets[0].backgroundColor[index],
@@ -521,13 +519,6 @@
                 const format = prompt('Format d\'export (json, csv, xlsx):', 'json');
                 if (format) exportData(format);
             }
-            if (e.target.classList.contains('period-btn')) {
-                e.preventDefault();
-                Livewire.emit('changePeriod', e.target.dataset.period);
-            }
         });
-
     })();
 </script>
-</body>
-</html>

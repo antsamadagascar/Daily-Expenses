@@ -11,10 +11,31 @@ use Illuminate\Support\Collection;
 
 class Dashboard extends Component
 {
+    public $selectedYear;
+    public $selectedMonth;
+    public $availableYears;
 
     public function mount()
     {
         $this->selectedYear = Carbon::now()->year;
+        $this->selectedMonth = Carbon::now()->month;
+        $this->availableYears = Expense::where('user_id', Auth::id())
+            ->selectRaw('DISTINCT YEAR(expense_date) as year')
+            ->pluck('year')
+            ->sort()
+            ->values();
+        if ($this->availableYears->isEmpty()) {
+            $this->availableYears = collect([Carbon::now()->year]);
+        }
+    }
+
+    public function updated($propertyName)
+    {
+        // Ensure valid month and year
+        if ($propertyName === 'selectedMonth' || $propertyName === 'selectedYear') {
+            $this->selectedMonth = max(1, min(12, (int)$this->selectedMonth));
+            $this->selectedYear = max(2000, min(Carbon::now()->year, (int)$this->selectedYear));
+        }
     }
 
     public function render()
@@ -32,29 +53,32 @@ class Dashboard extends Component
             'budgetProgress' => $this->budgetProgress,
             'expensesByDay' => $this->expensesByDay,
             'previousMonthComparison' => $this->previousMonthComparison,
+            'availableYears' => $this->availableYears,
+            'selectedYear' => $this->selectedYear,
+            'selectedMonth' => $this->selectedMonth,
         ])->layout('layouts.app');
     }
 
     public function getCurrentMonthExpensesProperty()
     {
         return Expense::where('user_id', Auth::id())
-            ->whereMonth('expense_date', Carbon::now()->month)
-            ->whereYear('expense_date', Carbon::now()->year)
+            ->whereMonth('expense_date', $this->selectedMonth)
+            ->whereYear('expense_date', $this->selectedYear)
             ->sum('amount');
     }
 
     public function getCurrentMonthCountProperty()
     {
         return Expense::where('user_id', Auth::id())
-            ->whereMonth('expense_date', Carbon::now()->month)
-            ->whereYear('expense_date', Carbon::now()->year)
+            ->whereMonth('expense_date', $this->selectedMonth)
+            ->whereYear('expense_date', $this->selectedYear)
             ->count();
     }
 
     public function getDailyAverageProperty()
     {
-        $daysInMonth = Carbon::now()->daysInMonth;
-        $currentDay = Carbon::now()->day;
+        $daysInMonth = Carbon::create($this->selectedYear, $this->selectedMonth)->daysInMonth;
+        $currentDay = min(Carbon::now()->day, $daysInMonth);
         $monthExpenses = $this->currentMonthExpenses;
         return $currentDay > 0 ? $monthExpenses / $currentDay : 0;
     }
@@ -63,8 +87,8 @@ class Dashboard extends Component
     {
         return Expense::with('category')
             ->where('user_id', Auth::id())
-            ->whereMonth('expense_date', Carbon::now()->month)
-            ->whereYear('expense_date', Carbon::now()->year)
+            ->whereMonth('expense_date', $this->selectedMonth)
+            ->whereYear('expense_date', $this->selectedYear)
             ->selectRaw('category_id, SUM(amount) as total')
             ->groupBy('category_id')
             ->orderByDesc('total')
@@ -82,25 +106,25 @@ class Dashboard extends Component
             ->get();
     }
 
-
     public function getMonthlyEvolutionProperty()
     {
         $months = [];
-        $currentDate = Carbon::now();
+        $endDate = Carbon::create($this->selectedYear, $this->selectedMonth);
+        $startDate = $endDate->copy()->subMonths(11);
         
-        for ($i = 11; $i >= 0; $i--) {
-            $date = $currentDate->copy()->subMonths($i);
+        while ($startDate <= $endDate) {
             $total = Expense::where('user_id', Auth::id())
-                ->whereMonth('expense_date', $date->month)
-                ->whereYear('expense_date', $date->year)
+                ->whereMonth('expense_date', $startDate->month)
+                ->whereYear('expense_date', $startDate->year)
                 ->sum('amount');
             
             $months[] = [
-                'month' => $date->format('M Y'),
+                'month' => $startDate->format('M Y'),
                 'total' => $total,
-                'month_num' => $date->month,
-                'year' => $date->year
+                'month_num' => $startDate->month,
+                'year' => $startDate->year
             ];
+            $startDate->addMonth();
         }
         
         return $months;
@@ -108,11 +132,10 @@ class Dashboard extends Component
 
     public function getYearlyComparisonProperty()
     {
-        $currentYear = Carbon::now()->year;
-        $previousYear = $currentYear - 1;
+        $previousYear = $this->selectedYear - 1;
         
         $currentYearTotal = Expense::where('user_id', Auth::id())
-            ->whereYear('expense_date', $currentYear)
+            ->whereYear('expense_date', $this->selectedYear)
             ->sum('amount');
             
         $previousYearTotal = Expense::where('user_id', Auth::id())
@@ -130,7 +153,8 @@ class Dashboard extends Component
     public function getWeeklyTrendProperty()
     {
         $weeks = [];
-        $startDate = Carbon::now()->subWeeks(7);
+        $endDate = Carbon::create($this->selectedYear, $this->selectedMonth)->endOfMonth();
+        $startDate = $endDate->copy()->subWeeks(7);
         
         for ($i = 0; $i < 8; $i++) {
             $weekStart = $startDate->copy()->addWeeks($i)->startOfWeek();
@@ -154,8 +178,8 @@ class Dashboard extends Component
     {
         return Expense::with('category')
             ->where('user_id', Auth::id())
-            ->whereMonth('expense_date', Carbon::now()->month)
-            ->whereYear('expense_date', Carbon::now()->year)
+            ->whereMonth('expense_date', $this->selectedMonth)
+            ->whereYear('expense_date', $this->selectedYear)
             ->selectRaw('category_id, SUM(amount) as total, COUNT(*) as count')
             ->groupBy('category_id')
             ->orderByDesc('total')
@@ -173,7 +197,7 @@ class Dashboard extends Component
 
     public function getBudgetProgressProperty()
     {
-        $currentMonth = Carbon::now();
+        $currentMonth = Carbon::create($this->selectedYear, $this->selectedMonth);
         
         return Budget::where('user_id', Auth::id())
             ->where('is_active', true)
@@ -199,8 +223,8 @@ class Dashboard extends Component
     public function getExpensesByDayProperty()
     {
         $days = [];
-        $startOfMonth = Carbon::now()->startOfMonth();
-        $endOfMonth = Carbon::now()->endOfMonth();
+        $startOfMonth = Carbon::create($this->selectedYear, $this->selectedMonth)->startOfMonth();
+        $endOfMonth = Carbon::create($this->selectedYear, $this->selectedMonth)->endOfMonth();
         
         $expenses = Expense::where('user_id', Auth::id())
             ->whereBetween('expense_date', [$startOfMonth, $endOfMonth])
@@ -225,7 +249,7 @@ class Dashboard extends Component
 
     public function getPreviousMonthComparisonProperty()
     {
-        $currentMonth = Carbon::now();
+        $currentMonth = Carbon::create($this->selectedYear, $this->selectedMonth);
         $previousMonth = $currentMonth->copy()->subMonth();
         
         $currentTotal = Expense::where('user_id', Auth::id())
@@ -247,3 +271,4 @@ class Dashboard extends Component
         ];
     }
 }
+?>
