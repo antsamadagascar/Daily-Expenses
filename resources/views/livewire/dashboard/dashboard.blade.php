@@ -534,10 +534,6 @@
             }).format(num);
         }
 
-        function calculatePercentage(value, total) {
-            return total > 0 ? ((value / total) * 100).toFixed(1) : 0;
-        }
-
         function showToast(message, type = 'info') {
             const toast = document.createElement('div');
             toast.className = `fixed top-4 right-4 p-4 rounded-lg shadow-lg z-50 transition-all duration-300 ${
