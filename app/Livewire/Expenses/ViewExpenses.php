@@ -333,7 +333,7 @@ class ViewExpenses extends Component
                 ->sum('amount');
 
             $remaining = max($budget->amount - $spentBefore - $spentThisMonth, 0);
-            $remainingNow = max($budget->amount - $usedUntilNow, 0);
+        //    $remainingNow = max($budget->amount - $usedUntilNow, 0);
 
             return [
                 'budget_name' => $budget->name,
@@ -343,7 +343,7 @@ class ViewExpenses extends Component
                 'spent_this_month' => $spentThisMonth,
                 'used_until_now' => $usedUntilNow,
                 'remaining' => $remaining,
-                'remaining_now' => $remainingNow,
+                'remaining_now' => $spentThisMonth,
                 'start_date' => $budget->start_date,
                 'end_date' => $budget->end_date,
             ];

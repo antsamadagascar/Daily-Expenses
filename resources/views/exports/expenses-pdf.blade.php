@@ -202,8 +202,10 @@
                 <tr style="background-color: whitesmoke;">
                     <th style="padding: 12px 10px; text-align: left;">Budget Utilisé</th>
                     <th style="padding: 12px 10px; text-align: right;">Montant Alloué</th>
-                    <th style="padding: 12px 10px; text-align: right;">Utilisé</th>
+                    <th style="padding: 12px 10px; text-align: right;">Total Utilisé</th>
+                    <th style="padding: 12px 10 px; text-align: right;">Utilisé ce mois</th>
                     <th style="padding: 12px 10px; text-align: right;">Reste</th>
+                    <th style="padding: 12px 10px; text-align: right;">Devise</th>
                     <th style="padding: 12px 10px; text-align: center;">Période</th>
                 </tr>
             </thead>
@@ -213,7 +215,7 @@
                         $used = $b['spent_before'] + $b['spent_this_month'];
                         $totalAllocated += $b['budgeted'];
                         $totalUsed += $used;
-                        $totalRemaining += $b['remaining'];
+                        $totalRemaining += $b['remaining_now'];
                     @endphp
                     <tr style="border-bottom: 1px solid #ddd;">
                         <td style="padding: 10px; max-width: 250px; word-break: break-word;">
@@ -222,11 +224,13 @@
                                 {{ Str::limit($b['description'], 200, '...') }}
                             </span>
                         </td>
-                        <td style="padding: 10px; text-align: right;">{{ number_format($b['budgeted'], 0, ',', ' ') }} Ar</td>
-                        <td style="padding: 10px; text-align: right;">{{ number_format($used, 0, ',', ' ') }} Ar</td>
+                        <td style="padding: 10px; text-align: right;">{{ number_format($b['budgeted'], 0, ',', ' ') }}</td>
+                        <td style="padding: 10px; text-align: right;">{{ number_format($used, 0, ',', ' ') }}</td>
+                        <td style="padding: 10px; text-align: right;">{{ number_format($b['remaining_now'], 0, ',', ' ') }} </td>
                         <td style="padding: 10px; text-align: right; color: {{ $b['remaining'] < 0 ? '#cc0000' : '#000' }};">
-                            {{ number_format($b['remaining'], 0, ',', ' ') }} Ar
+                            {{ number_format($b['remaining'], 0, ',', ' ') }} 
                         </td>
+                        <td style="padding: 10px; text-align: right;">Ariary</td>
                         <td style="padding: 10px; text-align: center;">
                             {{ \Carbon\Carbon::parse($b['start_date'])->format('d/m/Y') }}<br>
                             <span style="color: #666;">au</span><br>
@@ -237,9 +241,11 @@
 
                 <tr style="background-color: #f5f5f5; border-top: 3px solid #000;">
                     <td style="padding: 12px 10px; font-weight: bold;">TOTAL GÉNÉRAL</td>
-                    <td style="padding: 12px 10px; text-align: right;">{{ number_format($totalAllocated, 0, ',', ' ') }} Ar</td>
-                    <td style="padding: 12px 10px; text-align: right;">{{ number_format($totalUsed, 0, ',', ' ') }} Ar</td>
-                    <td style="padding: 12px 10px; text-align: right;">{{ number_format($totalRemaining, 0, ',', ' ') }} Ar</td>
+                    <td style="padding: 12px 10px; text-align: right;">{{ number_format($totalAllocated, 0, ',', ' ') }} </td>
+                    <td style="padding: 12px 10px; text-align: right;">{{ number_format($totalUsed, 0, ',', ' ') }} </td>
+                    <td style="padding: 12px 10px; text-align: right;">{{ number_format($totalRemaining, 0, ',', ' ') }} </td>
+                    <td style="padding: 12px 10px; text-align: center;">—</td>
+                    <td style="padding: 12px 10px; text-align: center;">—</td>
                     <td style="padding: 12px 10px; text-align: center;">—</td>
                 </tr>
             </tbody>
