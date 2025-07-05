@@ -258,24 +258,4 @@ class Dashboard extends Component
             'trend' => $currentTotal > $previousTotal ? 'up' : 'down'
         ];
     }
-
-    public function changePeriod($period)
-    {
-        $this->selectedPeriod = $period;
-        
-        switch ($period) {
-            case 'month':
-                $this->startDate = Carbon::now()->startOfMonth()->format('Y-m-d');
-                $this->endDate = Carbon::now()->endOfMonth()->format('Y-m-d');
-                break;
-            case 'year':
-                $this->startDate = Carbon::now()->startOfYear()->format('Y-m-d');
-                $this->endDate = Carbon::now()->endOfYear()->format('Y-m-d');
-                break;
-            case 'week':
-                $this->startDate = Carbon::now()->startOfWeek()->format('Y-m-d');
-                $this->endDate = Carbon::now()->endOfWeek()->format('Y-m-d');
-                break;
-        }
-    }
 }
