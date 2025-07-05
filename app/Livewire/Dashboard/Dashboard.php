@@ -235,27 +235,4 @@ class Dashboard extends Component
         return $days;
     }
 
-    public function getPreviousMonthComparisonProperty()
-    {
-        $currentMonth = Carbon::now();
-        $previousMonth = $currentMonth->copy()->subMonth();
-        
-        $currentTotal = Expense::where('user_id', Auth::id())
-            ->whereMonth('expense_date', $currentMonth->month)
-            ->whereYear('expense_date', $currentMonth->year)
-            ->sum('amount');
-            
-        $previousTotal = Expense::where('user_id', Auth::id())
-            ->whereMonth('expense_date', $previousMonth->month)
-            ->whereYear('expense_date', $previousMonth->year)
-            ->sum('amount');
-            
-        return [
-            'current' => $currentTotal,
-            'previous' => $previousTotal,
-            'difference' => $currentTotal - $previousTotal,
-            'percentage' => $previousTotal > 0 ? (($currentTotal - $previousTotal) / $previousTotal) * 100 : 0,
-            'trend' => $currentTotal > $previousTotal ? 'up' : 'down'
-        ];
-    }
 }
