@@ -47,9 +47,9 @@
                     <button class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition">
                         Exporter
                     </button>
-                    <button class="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition">
+                    <!-- <button class="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition">
                         Filtrer
-                    </button>
+                    </button> -->
                 </div>
             </div>
         </div>
@@ -136,6 +136,36 @@
                     </div>
                 </div>
             </div>
+        </div>
+
+
+        <div class="mb-8 p-6 bg-white rounded-xl shadow-sm max-w-md">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">Comparaison Annuelle</h3>
+                <p><strong>Année en cours :</strong> {{ number_format($yearlyComparison['current_year'], 2, ',', ' ') }} Ar</p>
+                <p><strong>Année précédente :</strong> {{ number_format($yearlyComparison['previous_year'], 2, ',', ' ') }} Ar</p>
+                <p><strong>Différence :</strong> {{ number_format($yearlyComparison['difference'], 2, ',', ' ') }} Ar</p>
+                <p>
+                    <strong>Variation en % :</strong>
+                    @php
+                        $percentage = $yearlyComparison['percentage'];
+                        $absPrevYear = abs($yearlyComparison['previous_year']);
+                    @endphp
+
+                    @if($absPrevYear < 1000)
+                        <span class="text-red-500 font-semibold">Variation trop élevée ou non significative</span>
+                    @else
+                        <span class="{{ $percentage >= 0 ? 'text-green-600' : 'text-red-600' }} font-semibold">
+                            {{ number_format($percentage, 2, ',', ' ') }}%
+                        </span>
+                    @endif
+                </p>
+
+                @if($absPrevYear < 1000)
+                    <p class="mt-4 text-sm text-gray-600 italic">
+                        Note : La variation en pourcentage est élevée car le total de l’année précédente est très faible, ce qui amplifie le pourcentage.  
+                        Il est conseillé de considérer surtout la différence absolue pour une meilleure compréhension de l’évolution.
+                    </p>
+                @endif
         </div>
 
         <!-- Graphiques et analyses -->

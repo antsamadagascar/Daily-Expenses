@@ -11,22 +11,10 @@ use Illuminate\Support\Collection;
 
 class Dashboard extends Component
 {
-    public $selectedPeriod = 'month'; 
-    public $startDate;
-    public $endDate;
-    public $comparisonMode = false;
-    public $selectedCategories = [];
-    public $minAmount;
-    public $maxAmount;
-    public $searchDescription;
-    public $sortBy = 'expense_date';
-    public $sortDirection = 'desc';
 
     public function mount()
     {
         $this->selectedYear = Carbon::now()->year;
-        $this->minDate = null;
-        $this->maxDate = null;
     }
 
     public function render()
@@ -235,4 +223,27 @@ class Dashboard extends Component
         return $days;
     }
 
+    public function getPreviousMonthComparisonProperty()
+    {
+        $currentMonth = Carbon::now();
+        $previousMonth = $currentMonth->copy()->subMonth();
+        
+        $currentTotal = Expense::where('user_id', Auth::id())
+            ->whereMonth('expense_date', $currentMonth->month)
+            ->whereYear('expense_date', $currentMonth->year)
+            ->sum('amount');
+            
+        $previousTotal = Expense::where('user_id', Auth::id())
+            ->whereMonth('expense_date', $previousMonth->month)
+            ->whereYear('expense_date', $previousMonth->year)
+            ->sum('amount');
+            
+        return [
+            'current' => $currentTotal,
+            'previous' => $previousTotal,
+            'difference' => $currentTotal - $previousTotal,
+            'percentage' => $previousTotal > 0 ? (($currentTotal - $previousTotal) / $previousTotal) * 100 : 0,
+            'trend' => $currentTotal > $previousTotal ? 'up' : 'down'
+        ];
+    }
 }
