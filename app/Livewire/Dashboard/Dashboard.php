@@ -278,9 +278,4 @@ class Dashboard extends Component
                 break;
         }
     }
-
-    public function exportData($format = 'csv')
-    {
-        $this->dispatch('export-initiated', ['format' => $format]);
-    }
 }
