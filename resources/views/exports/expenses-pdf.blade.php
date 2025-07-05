@@ -200,7 +200,7 @@
         <table class="budget-table" style="width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 12px; border: 1px solid #000;">
             <thead>
                 <tr style="background-color: whitesmoke;">
-                    <th style="padding: 12px 10px; text-align: left;">Budget</th>
+                    <th style="padding: 12px 10px; text-align: left;">Description</th>
                     <th style="padding: 12px 10px; text-align: right;">Montant Alloué</th>
                     <th style="padding: 12px 10px; text-align: right;">Utilisé</th>
                     <th style="padding: 12px 10px; text-align: right;">Reste</th>
@@ -216,7 +216,12 @@
                         $totalRemaining += $b['remaining'];
                     @endphp
                     <tr style="border-bottom: 1px solid #ddd;">
-                        <td style="padding: 10px;">{{ $b['budget_name'] }}</td>
+                        <td style="padding: 10px; max-width: 250px; word-break: break-word;">
+                            <strong>{{ $b['budget_name'] }}</strong><br>
+                            <span style="color: #666; font-size: 11px; display: block; margin-top: 4px;">
+                                {{ Str::limit($b['description'], 200, '...') }}
+                            </span>
+                        </td>
                         <td style="padding: 10px; text-align: right;">{{ number_format($b['budgeted'], 0, ',', ' ') }} Ar</td>
                         <td style="padding: 10px; text-align: right;">{{ number_format($used, 0, ',', ' ') }} Ar</td>
                         <td style="padding: 10px; text-align: right; color: {{ $b['remaining'] < 0 ? '#cc0000' : '#000' }};">

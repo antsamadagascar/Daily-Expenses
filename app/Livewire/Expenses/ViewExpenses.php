@@ -337,6 +337,7 @@ class ViewExpenses extends Component
 
             return [
                 'budget_name' => $budget->name,
+                'description'=> $budget->description,
                 'budgeted' => $budget->amount,
                 'spent_before' => $spentBefore,
                 'spent_this_month' => $spentThisMonth,
