@@ -497,10 +497,6 @@
             animateCards();
         });
 
-        function refreshDashboard() {
-            console.log('Rafraîchissement du tableau de bord...');
-        }
-
         function exportData(format) {
             const data = {
                 monthly: monthlyData,
