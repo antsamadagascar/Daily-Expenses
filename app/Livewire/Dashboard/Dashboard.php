@@ -279,11 +279,6 @@ class Dashboard extends Component
         }
     }
 
-    public function toggleComparison()
-    {
-        $this->comparisonMode = !$this->comparisonMode;
-    }
-
     public function exportData($format = 'csv')
     {
         $this->dispatch('export-initiated', ['format' => $format]);

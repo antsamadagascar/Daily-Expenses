@@ -146,7 +146,6 @@
                     <h3 class="text-lg font-semibold text-gray-900">Évolution mensuelle</h3>
                     <div class="flex space-x-2">
                         <button class="text-sm px-3 py-1 bg-blue-100 text-blue-700 rounded-md">12 mois</button>
-                        <button class="text-sm px-3 py-1 text-gray-500 hover:bg-gray-100 rounded-md">6 mois</button>
                     </div>
                 </div>
                <div class="chart-container" style="height: 300px;">
