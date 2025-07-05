@@ -200,7 +200,7 @@
         <table class="budget-table" style="width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 12px; border: 1px solid #000;">
             <thead>
                 <tr style="background-color: whitesmoke;">
-                    <th style="padding: 12px 10px; text-align: left;">Description</th>
+                    <th style="padding: 12px 10px; text-align: left;">Budget Utilisé</th>
                     <th style="padding: 12px 10px; text-align: right;">Montant Alloué</th>
                     <th style="padding: 12px 10px; text-align: right;">Utilisé</th>
                     <th style="padding: 12px 10px; text-align: right;">Reste</th>
