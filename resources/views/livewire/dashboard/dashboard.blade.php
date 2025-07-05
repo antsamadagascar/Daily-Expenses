@@ -344,8 +344,9 @@
         });
 
         const categoryCtx = document.getElementById('categoryChart').getContext('2d');
+        categoryData.forEach(item => item.total = Number(item.total || 0));
         const totalCategoryAmount = categoryData.reduce((sum, item) => sum + item.total, 0);
-
+        
         new Chart(categoryCtx, {
             type: 'doughnut',
             data: {
@@ -372,7 +373,10 @@
                                 const data = chart.data;
                                 return data.labels.map((label, index) => {
                                     const value = data.datasets[0].data[index];
-                                    const percentage = ((value / totalCategoryAmount) * 100).toFixed(1);
+                                    const percentage = totalCategoryAmount > 0
+                                        ? ((value / totalCategoryAmount) * 100).toFixed(1)
+                                        : '0.0';
+
                                     return {
                                         text: `${label} (${percentage}%)`,
                                         fillStyle: data.datasets[0].backgroundColor[index],
