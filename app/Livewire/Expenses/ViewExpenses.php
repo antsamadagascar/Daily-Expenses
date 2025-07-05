@@ -464,4 +464,21 @@ class ViewExpenses extends Component
         ];
     }
 
+    public function getRealBudgetUsage($budget)
+    {
+        $today = Carbon::today();
+
+        $usedAmount = Expense::where('user_id', Auth::id())
+            ->where('budget_id', $budget->id)
+            ->whereDate('expense_date', '<=', $today)
+            ->sum('amount');
+
+        $remainingAmount = $budget->amount - $usedAmount;
+
+        return [
+            'used' => $usedAmount,
+            'remaining' => $remainingAmount
+        ];
+    }
+
 }
