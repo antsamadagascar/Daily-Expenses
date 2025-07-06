@@ -7,7 +7,7 @@
     <title>{{ config('app.name', 'Gestion Dépenses') }}</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Livewire -->
+    <!-- Livewire Styles -->
     @livewireStyles
     <script>
         tailwind.config = {
@@ -81,7 +81,7 @@
                                 
                                 <a href="{{ route('expenses.add') }}"
                                    class="group flex items-center px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 {{ request()->routeIs('expenses.add') ? 'bg-green-100 text-green-700 shadow-sm' : 'text-gray-700 hover:bg-green-50 hover:text-green-600' }}">
-                                    <svg class="w-4 h-4 mr-2 {{ request()->routeIs('expenses.add') ? 'text-green-600' : 'text-gray-400 group-hover:text-green-500' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <svg class="w-4 H-4 mr-2 {{ request()->routeIs('expenses.add') ? 'text-green-600' : 'text-gray-400 group-hover:text-green-500' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
                                     </svg>
                                     Ajouter dépense
@@ -142,8 +142,7 @@
                  x-transition:leave="transition ease-in duration-150"
                  x-transition:leave-start="opacity-100 transform translate-y-0"
                  x-transition:leave-end="opacity-0 transform -translate-y-2"
-                 class="md:hidden bg-white border-t border-gray-200 shadow-lg"
-                 style="display: none;">
+                 class="md:hidden bg-white border-t border-gray-200 shadow-lg">
                 <div class="px-4 py-3 space-y-1">
                     <!-- Section Navigation Mobile -->
                     <div class="pb-3">
@@ -222,5 +221,7 @@
             </div>
         </main>
     </div>
+    <!-- Livewire Scripts -->
+    @livewireScripts
 </body>
 </html>

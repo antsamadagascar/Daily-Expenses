@@ -311,14 +311,52 @@ class ViewExpenses extends Component
             ->orderBy('expense_date', 'asc')
             ->get();
 
-        $budgetIds = $expenses->pluck('budget_id')->unique()->filter(); 
+        $budgetIds = $expenses->pluck('budget_id')->unique()->filter();
         $budgets = \App\Models\Budget::whereIn('id', $budgetIds)->get();
+
+        $today = Carbon::now();
+
+        $budgetSummaries = $budgets->map(function ($budget) use ($monthStart, $monthEnd, $today) {
+            $spentBefore = Expense::where('user_id', Auth::id())
+                ->where('budget_id', $budget->id)
+                ->whereBetween('expense_date', [$budget->start_date, $monthStart->copy()->subDay()])
+                ->sum('amount');
+
+            $spentThisMonth = Expense::where('user_id', Auth::id())
+                ->where('budget_id', $budget->id)
+                ->whereBetween('expense_date', [$monthStart, $monthEnd])
+                ->sum('amount');
+
+            $usedUntilNow = Expense::where('user_id', Auth::id())
+                ->where('budget_id', $budget->id)
+                ->whereBetween('expense_date', [$budget->start_date, $today])
+                ->sum('amount');
+
+            $remaining = max($budget->amount - $spentBefore - $spentThisMonth, 0);
+        //    $remainingNow = max($budget->amount - $usedUntilNow, 0);
+
+            return [
+                'budget_name' => $budget->name,
+                'description'=> $budget->description,
+                'budgeted' => $budget->amount,
+                'spent_before' => $spentBefore,
+                'spent_this_month' => $spentThisMonth,
+                'used_until_now' => $usedUntilNow,
+                'remaining' => $remaining,
+                'remaining_now' => $spentThisMonth,
+                'start_date' => $budget->start_date,
+                'end_date' => $budget->end_date,
+            ];
+        });
 
         $monthName = $monthStart->locale('fr')->monthName;
         $total = $expenses->sum('amount');
         $categoryTotals = $this->categoryTotals;
         $selectedMonth = $this->selectedMonth;
         $selectedYear = $this->selectedYear;
+        $totalRemaining = $budgetSummaries->sum('remaining');
+        $monthStart = Carbon::createFromDate($this->selectedYear, $this->selectedMonth, 1)->startOfMonth();
+
 
         $pdf = Pdf::loadView('exports.expenses-pdf', compact(
             'expenses',
@@ -327,7 +365,10 @@ class ViewExpenses extends Component
             'categoryTotals',
             'selectedMonth',
             'selectedYear',
-            'budgets'
+            'budgets',
+            'budgetSummaries',
+            'totalRemaining',
+            'monthStart'
         ))->setPaper('a4', 'portrait')
         ->setOptions([
             'isHtml5ParserEnabled' => true,
@@ -338,6 +379,7 @@ class ViewExpenses extends Component
             echo $pdf->output();
         }, "depenses_{$monthName}_{$this->selectedYear}.pdf");
     }
+
 
     public function deleteExpense($expenseId)
     {
@@ -419,6 +461,23 @@ class ViewExpenses extends Component
         return [
             'used' => $usedAmount,
             'remaining' => $remainingAmount,
+        ];
+    }
+
+    public function getRealBudgetUsage($budget)
+    {
+        $today = Carbon::today();
+
+        $usedAmount = Expense::where('user_id', Auth::id())
+            ->where('budget_id', $budget->id)
+            ->whereDate('expense_date', '<=', $today)
+            ->sum('amount');
+
+        $remainingAmount = $budget->amount - $usedAmount;
+
+        return [
+            'used' => $usedAmount,
+            'remaining' => $remainingAmount
         ];
     }
 

@@ -50,7 +50,7 @@
         <!-- Résumé des budgets utilisés -->
         <div class="bg-green-50 rounded-xl p-6 mb-8 shadow-inner">
             <h3 class="text-xl font-semibold text-green-900 mb-6 border-b border-green-200 pb-2">
-                Budgets utilisés ce mois
+                Budgets utilisés — vue actuelle et réelle (au {{ now()->format('d/m/Y') }})
             </h3>
 
             @php
@@ -59,7 +59,8 @@
 
             @forelse ($budgetsUtilises as $budget)
                 @php
-                    $usage = $this->getBudgetUsage($budget);
+                    $filtered = $this->getBudgetUsage($budget);
+                    $real = $this->getRealBudgetUsage($budget);
                 @endphp
 
                 <div class="mb-4 border border-green-300 rounded-lg p-4 bg-white shadow-sm">
@@ -74,18 +75,22 @@
                                 {{ number_format($budget->amount, 0, ',', ' ') }} Ar
                             </p>
                             <p class="text-sm text-gray-600">
-                                <span class="font-medium text-gray-800">Dépensé :</span>
-                                {{ number_format($usage['used'], 0, ',', ' ') }} Ar
+                                <span class="font-medium text-gray-800">Dépensé selon filtres :</span>
+                                {{ number_format($filtered['used'], 0, ',', ' ') }} Ar
                             </p>
                             <p class="text-sm text-gray-600">
-                                <span class="font-medium text-gray-800">Reste :</span>
-                                {{ number_format($usage['remaining'], 0, ',', ' ') }} Ar
+                                <span class="font-medium text-gray-800">Dépensé jusqu’à aujourd’hui :</span>
+                                {{ number_format($real['used'], 0, ',', ' ') }} Ar
+                            </p>
+                            <p class="text-sm text-gray-600">
+                                <span class="font-medium text-gray-800">Reste réel :</span>
+                                {{ number_format($real['remaining'], 0, ',', ' ') }} Ar
                             </p>
                         </div>
                         <div class="flex items-center text-green-600">
                             <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M3 10h11M9 21V3m0 0L5 7m4-4l4 4"></path>
+                                    d="M3 10h11M9 21V3m0 0L5 7m4-4l4 4"/>
                             </svg>
                         </div>
                     </div>
@@ -93,7 +98,7 @@
             @empty
                 <p class="text-sm text-gray-500 italic">Aucun budget utilisé ce mois.</p>
             @endforelse
-    </div>
+        </div>
 
 
     <!-- Filtres -->
