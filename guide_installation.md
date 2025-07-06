@@ -13,24 +13,7 @@ cd Daily-Expenses/
 
 ---
 
-## 🧱 2. Générer les fichiers de migration (si nécessaire)
-
-Si la migration de la table `users` n'existe pas encore, créez-la avec :
-
-```bash
-php artisan make:migration create_users_table
-```
-
-## ⚙️ 3. Exécuter les migrations et lancer le serveur
-
-```bash
-php artisan migrate
-php artisan serve
-```
-
----
-
-## 👤 4. Créer un utilisateur via Tinker
+## 👤 2. Créer un utilisateur via Tinker
 
 ```bash
 php artisan tinker
@@ -50,6 +33,22 @@ User::create([
 ```
 
 ---
+
+## 🧱 3. Générer les fichiers de migration (si nécessaire)
+
+Si la migration de la table `users` n'existe pas encore, créez-la avec :
+
+```bash
+php artisan make:migration create_users_table
+```
+
+## ⚙️ 4. Exécuter les migrations et lancer le serveur
+
+```bash
+php artisan migrate
+php artisan serve
+
+
 
 ## ✅ L'application est maintenant prête à l'emploi !
 
