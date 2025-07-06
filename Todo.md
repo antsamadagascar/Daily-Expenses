@@ -1,53 +1,78 @@
-# TODO - Application de Suivi de Dépenses
+# 📊 Daily Expenses
 
-## 📁 Architecture Base de Données
-- [ ] Table `users`
-- [ ] Table `categories`
-- [ ] Table `expenses`
+Application web de gestion budgétaire personnelle permettant de suivre, analyser et visualiser ses dépenses de manière efficace.
 
-## ✅ Authentification
-- [ ] Connexion (email ou username + mot de passe)
-- [ ] Session sécurisée
-- [ ] Déconnexion
-- [ ] Récupération de mot de passe (optionnel)
+---
 
-## 📂 Gestion des Catégories
-- [ ] Catégories prédéfinies (Alimentation, Transport, etc.)
-- [ ] Ajout de catégories personnalisées
-- [ ] Modification / suppression des catégories utilisateur
+## 🔐 Authentification
 
-## 💸 Saisie des Dépenses
-- [ ] Formulaire multi-dépenses
-- [ ] Champs : Date, Montant, Description, Catégorie
-- [ ] Validation : montant positif, date valide
-- [ ] Enregistrement rapide
+- Connexion
+- Déconnexion
 
-## 🔍 Consultation et Filtrage
-- [ ] Vue annuelle : total + détail mensuel
-- [ ] Vue mensuelle : liste complète des dépenses
-- [ ] Filtres : catégorie, période, montant
-- [ ] Tri : date, montant, catégorie
-- [ ] Totaux par période
+---
 
-## 📊 Tableaux de Bord
-- [ ] Résumé du mois en cours
-- [ ] Top 5 des catégories les plus coûteuses
-- [ ] Graphique des dépenses par mois
-- [ ] Comparaison avec le mois précédent
+## 💰 Gestion des Budgets
 
-## 📤 Export / Import
-- [ ] Export PDF mensuel avec totaux
-- [ ] Import CSV avec mapping colonnes
-- [ ] Template CSV téléchargeable
+- Ajout multiple de budgets
+- Filtrage des budgets par :
+  - Nom
+  - Statut
+- Affichage :
+  - Montant total
+  - Reste budgétaire (en fonction du filtre et du jour actuel)
+- Réinitialisation des données de la table budgets
 
-## 🌟 Fonctionnalités Bonus
-- [ ] Recherche dans les descriptions
-- [ ] Duplication de dépenses récurrentes
-- [ ] Alerte si dépassement du budget mensuel
+---
 
-## 🖥️ Interface Utilisateur
-- [ ] Page Dashboard (résumés)
-- [ ] Page Ajouter Dépenses (multi-formulaire)
-- [ ] Page Mes Dépenses (liste + filtres)
-- [ ] Page Rapports (exports + stats)
-- [ ] Page Paramètres (profil, catégories)
+## 💸 Gestion des Dépenses
+
+- Ajout multiple de dépenses
+- Filtrage des dépenses par :
+  - Date de début et de fin
+  - Mois
+  - Année
+  - Catégories
+  - Mots-clés
+- Affichage des dépenses avec :
+  - CRUD complet
+  - Pagination
+- Réinitialisation des filtres pour afficher les données actuelles
+- Réinitialisation des données de la table dépenses
+- Répartition des dépenses par catégories
+- Export des dépenses en PDF pour un mois donné
+
+---
+
+## 📈 Tableau de Bord
+
+- **Filtrage par année et mois**
+- **Statistiques globales :**
+  - Total des dépenses
+  - Dépenses du mois
+  - Nombre de dépenses
+  - Moyenne journalière
+  - Budget restant
+- **Comparaison annuelle :**
+  - Dépenses de l'année actuelle vs année précédente
+  - Différences en valeur et en pourcentage
+- **Visualisations graphiques :**
+  - Évolution mensuelle des dépenses (sur 12 mois)
+  - Répartition par catégories
+  - Tendances hebdomadaires (7 derniers jours)
+- **Fonctionnalités supplémentaires :**
+  - Filtrage des dépenses récentes
+  - Affichage d’un calendrier de suivi des dépenses
+
+---
+
+## 🛠️ Technologies
+
+Laravel, Livewire, TailwindCSS, Chart.js, Bootstrap (minimal), Blade Components
+
+---
+
+## 📁 Structure recommandée
+
+- `app/Livewire` – Composants Livewire du tableau de bord
+- `resources/views` – Pages Blade (formulaires, tableaux, dashboards)
+- `public/pdf` – Exports PDF
