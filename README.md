@@ -2,6 +2,8 @@
 
 Application web de gestion budgétaire personnelle permettant de suivre, analyser et visualiser ses dépenses de manière efficace.
 
+📘 **Voir le guide d'installation :** [guide_installation.md](guide_installation.md)
+
 ---
 
 ## 🔐 Authentification
